@@ -20,8 +20,8 @@ function LongCard({
   backups,
 }) {
   return (
-    <div>
-      <Card sx={{ maxWidth: 345 }}>
+    <div className="cursor-pointer w-[345px] hover:shadow-sm  hover:shadow-gray-600">
+      <Card className="shadow-gray-300" sx={{ maxWidth: 345 }}>
         <CardMedia sx={{ height: 140 }} image={img} title="green iguana" />
         <CardContent>
           <div className="flex flex-col">

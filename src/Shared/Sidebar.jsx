@@ -4,14 +4,32 @@ import {
   Sidebar_Bottom_Items,
   Sidebar_Top_Items,
 } from "../lib/constants/navigation";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Button } from "@mui/material";
+import authServices from "../services/user.appwrite";
+import { useDispatch } from "react-redux";
+import { logout as authlogout } from "../store/userSlice";
+import Cookies from "js-cookie";
 const linkClass =
   "flex cursor-pointer items-center gap-2 font-light px-3 py-2 hover:bg-neutral-800 hover:text-white hover:no-underline transition-colors duration-300 ease-in-out active:bg-neutral-700 active:text-white rounded-sm text-base";
 
 function Sidebar({ className = "" }) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const logout = async () => {
+    try {
+      await authServices.logout();
+      dispatch(authlogout());
+      Cookies.remove("email");
+      Cookies.remove("password");
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div
       className={`px-3 flex flex-col  bg-neutral-900 w-60 ${className} overflow-hidden `}
@@ -50,10 +68,16 @@ function Sidebar({ className = "" }) {
             "text-red-600  hover:text-indigo-500"
           )}
         >
-          <span className="text-xl">
-            <LogoutIcon />
-          </span>
-          Logout
+          <div
+            onClick={() => {
+              logout();
+            }}
+          >
+            <span className="text-xl">
+              <LogoutIcon />
+            </span>
+            Logout
+          </div>
         </div>
       </div>
     </div>

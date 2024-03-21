@@ -17,6 +17,10 @@ import CreateServer from "./pages/CreateServer.jsx";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import NotFoundPage from "./pages/404.jsx";
+import { Provider } from "react-redux";
+import store from "./store/store.js";
+import Protected from "./Protected/Protected.jsx";
+import { Shop } from "@mui/icons-material";
 const router = createBrowserRouter([
   {
     path: "*",
@@ -28,11 +32,19 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <Home />,
+        element: (
+          <Protected>
+            <Home />
+          </Protected>
+        ),
       },
       {
         path: "servers",
-        element: <Servers />,
+        element: (
+          <Protected>
+            <Servers />
+          </Protected>
+        ),
       },
       {
         path: "users",
@@ -40,19 +52,35 @@ const router = createBrowserRouter([
       },
       {
         path: "blogs",
-        element: <Blogs />,
+        element: (
+          <Protected>
+            <Blogs />
+          </Protected>
+        ),
       },
       {
         path: "panel",
-        element: <Panel />,
+        element: (
+          <Protected>
+            <Panel />
+          </Protected>
+        ),
       },
       {
         path: "referrals",
-        element: <Referrals />,
+        element: (
+          <Protected>
+            <Referrals />
+          </Protected>
+        ),
       },
       {
         path: "shop",
-        element: <Shops />,
+        element: (
+          <Protected>
+            <Shops />
+          </Protected>
+        ),
       },
       {
         path: "support",
@@ -64,22 +92,36 @@ const router = createBrowserRouter([
       },
       {
         path: "create-server",
-        element: <CreateServer />,
+        element: (
+          <Protected>
+            <CreateServer />
+          </Protected>
+        ),
       },
     ],
   },
   {
     path: "/login",
-    element: <Login />,
+    element: (
+      <Protected>
+        <Login />
+      </Protected>
+    ),
   },
   {
     path: "/signup",
-    element: <Signup />,
+    element: (
+      <Protected>
+        <Signup />
+      </Protected>
+    ),
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </React.StrictMode>
 );

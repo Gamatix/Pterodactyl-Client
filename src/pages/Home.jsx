@@ -9,7 +9,7 @@ import LongCard from "../components/LongCard";
 
 function Home() {
   return (
-    <div className="flex flex-col overflow-y-auto bg-neutral-100 rounded-sm  ">
+    <div className="flex flex-col overflow-y-auto bg-neutral-100 rounded-sm pb-4 ">
       <div className="px-2 py-2 ">
         <img src="https://source.unsplash.com/1920x300?nature" />
       </div>
@@ -51,11 +51,11 @@ function Home() {
         </div>
       </div>
 
-      <div className="flex flex-row gap-2 items-center font-bold text-xl ml-2 mt-4 ">
+      <div className="flex flex-row gap-2 items-center font-bold text-xl ml-2 mt-0  ">
         Your Servers
         <AiOutlineReload className="translate-y-0.5 cursor-pointer" />
       </div>
-      <div className="ml-2 mt-2 shadow-neutral-200 broder-b border-neutral-200">
+      <div className="ml-2 mt-1 shadow-neutral-200 broder-b border-neutral-200">
         <LongCard
           img="https://source.unsplash.com/300x300?server"
           name="How2MC Tut Server "
