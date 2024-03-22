@@ -19,8 +19,9 @@ function Signup() {
 
   const signup = (data) => {
     console.log(data);
-    Cookies.set("email", data.email, { expires: 7 });
-    Cookies.set("password", data.password, { expires: 7 });
+
+    localStorage.setItem("email", data.email);
+    localStorage.setItem("password", data.password);
     // navigate("/");
   };
 

@@ -7,9 +7,13 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Fragment } from "react";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 function Header() {
   const ref = useRef(null);
   const navigate = useNavigate();
+  const user = useSelector((state) => state.user);
+
+  let userName = user?.userData?.name;
   return (
     <div className="  bg-white h-14 py-4 px-4 flex justify-between border-b border-gray-200 mb-2 items-center">
       <div className="relative">
@@ -23,6 +27,9 @@ function Header() {
           type="text"
           className="rounded-md placeholder:text-slate-700 text-black px-6 text-sm focus:outline-none active:outline-none h-10 w-[24rem] border border-gray-300 pl-11"
         />
+      </div>
+      <div className="ml-auto mr-4 font-bold text-neutral-600">
+        Welcome, {userName}
       </div>
       <div className="flex items-center gap-[12px] mr-2">
         <Popover className="relative">
@@ -93,7 +100,6 @@ function Header() {
             </>
           )}
         </Popover>
-
         <Menu as="div" className="relative ">
           <div className="pt-2">
             <Menu.Button className="inline-flex  rounded-full focus:outline-none focus:ring-2 focus:ring-neutral-400 ml-2 ">

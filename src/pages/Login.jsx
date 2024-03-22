@@ -26,9 +26,9 @@ function Login() {
         const user = await authServices.getAccount();
         if (user) {
           dispatch(authlogin(user));
+          localStorage.setItem("password", password);
+          localStorage.setItem("email", email);
           navigate("/");
-          Cookies.set("email", email, { expires: 7 });
-          Cookies.set("password", password, { expires: 7 });
         }
       }
     } catch (error) {

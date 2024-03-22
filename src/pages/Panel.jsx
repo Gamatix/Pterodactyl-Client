@@ -1,8 +1,10 @@
 import { Button } from "@mui/material";
 import React from "react";
 import { WiDirectionUpRight } from "react-icons/wi";
-
+import { useSelector } from "react-redux";
 function Panel() {
+  const email = useSelector((state) => state.user.userData.email);
+  console.log(email);
   return (
     <div className="flex flex-col ml-2 mr-2 bg-[rgb(240,240,240)] h-[750px] p-2 rounded-lg">
       <div className="">
@@ -22,7 +24,7 @@ function Panel() {
           <div className="w-[400px] bg-slate-600 p-3 rounded-lg text-white  shadow-lg shadow-gray-700">
             <div className="flex flex-row gap-4 ">
               <p className="font-bold">Email: </p>
-              <p className="text-neutral-200">Loading...</p>
+              <p className="text-neutral-200">{email}</p>
             </div>
           </div>
           <div className="mt-4 text-neutral-600 text-bolder">

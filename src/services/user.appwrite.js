@@ -53,6 +53,14 @@ export class userService {
       throw error;
     }
   }
+  async getUser(userId) {
+    try {
+      return await this.account.get(userId);
+    } catch (error) {
+      console.log("Error while getting user", error.message);
+      throw error;
+    }
+  }
 }
 
 const userAccountService = new userService();

@@ -22,8 +22,9 @@ function Sidebar({ className = "" }) {
     try {
       await authServices.logout();
       dispatch(authlogout());
-      Cookies.remove("email");
-      Cookies.remove("password");
+
+      localStorage.removeItem("email");
+      localStorage.removeItem("password");
       navigate("/login");
     } catch (error) {
       console.error(error);
