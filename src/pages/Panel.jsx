@@ -2,9 +2,56 @@ import { Button } from "@mui/material";
 import React from "react";
 import { WiDirectionUpRight } from "react-icons/wi";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import patchAPI from "../pterodactyl/functions/patchAPI";
+import apiCall from "../pterodactyl/functions/getAPI";
+import { FaCopy } from "react-icons/fa";
 function Panel() {
   const email = useSelector((state) => state.user.userData.email);
+  const userId = useSelector((state) => state.user.userId);
+  const [newPassword, setNewPassword] = React.useState(null);
+  const [isCopied, setIsCopied] = React.useState(false);
   console.log(email);
+  function randomPassword() {
+    let length = 8;
+    let charset =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let retVal = "";
+    for (let i = 0, n = charset.length; i < length; ++i) {
+      retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    return retVal;
+  }
+  async function resetPass() {
+    const [userResponse, userError] = await apiCall.get(
+      `https://panel.how2mc.xyz/api/application/users/${userId}`
+    );
+    if (userError) {
+      console.error("Error while getting user", userError);
+      return;
+    }
+    const user = userResponse.data.attributes;
+    console.log("User: ", user);
+    let password = randomPassword();
+    console.log("Password: ", password);
+    const [response, error] = await patchAPI.patch(
+      `https://panel.how2mc.xyz/api/application/users/${userId}`,
+      {
+        email: user.email,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        language: "en",
+        password: `${password}`,
+      }
+    );
+    if (error) {
+      console.error("Error while resetting password", error);
+      return;
+    }
+    setNewPassword(password);
+    console.log("Response: ", response);
+  }
   return (
     <div className="flex flex-col ml-2 mr-2 bg-[rgb(240,240,240)] h-[750px] p-2 rounded-lg">
       <div className="">
@@ -35,14 +82,37 @@ function Panel() {
           </div>
           <div className="flex flex-row gap-3 mt-2 cursor-pointer">
             <div>
-              <Button variant="contained">↗ &nbsp;Open game panel.</Button>
+              <Link to="https://panel.how2mc.xyz" target="_blank">
+                <Button variant="contained">↗ &nbsp;Open game panel.</Button>
+              </Link>
             </div>
             <div>
-              <Button variant="contained" color="error">
+              <Button variant="contained" color="error" onClick={resetPass}>
                 🗒 &nbsp;Reset password
               </Button>
             </div>
           </div>
+          {newPassword && (
+            <div className="flex flex-row gap-2">
+              {" "}
+              <div className="flex flex-row gap-2">
+                Your new password is:{" "}
+                <div className={ isCopied ? "text-yellow-500 font-bold" : 'text-black'}>
+                  {" "}
+                  {newPassword}
+                </div>{" "}
+              </div>{" "}
+              <div className="translate-y-1 cursor-pointer">
+                {" "}
+                <FaCopy
+                  onClickCapture={() => {
+                    navigator.clipboard.writeText(newPassword);
+                    setIsCopied(true);
+                  }}
+                />
+              </div>{" "}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 const url = "https://panel.how2mc.xyz";
 const api_key = "ptla_aap6jlHVZ8XT6EfIN9sRRwuUZ1QgUNcQz59oE2fDtpX";
-console.log(url);
-fetch(`${url}/api/application/users`, {
+
+fetch(`${url}/api/application/users/1`, {
   method: "GET",
   headers: {
     Accept: "application/json",
@@ -9,12 +9,11 @@ fetch(`${url}/api/application/users`, {
     Authorization: `Bearer ${api_key}`,
   },
 })
-  .then((res) => res.json())
-  .then((json) => {
-    json.data.forEach((v) => {
-      console.log(" User: ", v.attributes);
-    });
-
-    console.log(typeof json.data);
+  .then((res) => {
+    //console.log(res);
+    return res.json();
+  })
+  .then((data) => {
+    console.log(data);
   })
   .catch((err) => console.error(err));

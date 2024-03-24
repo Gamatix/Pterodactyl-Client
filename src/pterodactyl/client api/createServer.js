@@ -29,6 +29,7 @@ fetch(`${url}/api/application/servers`, {
     feature_limits: {
       databases: 5,
       backups: 1,
+      allocations: 1,
     },
     deploy: {
       locations: [1],
@@ -44,6 +45,7 @@ fetch(`${url}/api/application/servers`, {
   .then((response) => {
     if (response.ok) {
       console.log("Server created successfully");
+      return response.json();
     } else {
       const text = response.json();
       text.then(
@@ -52,4 +54,5 @@ fetch(`${url}/api/application/servers`, {
       );
     }
   })
+  .then((json) => console.log(json))
   .catch((err) => console.error("Error is", err));

@@ -3,8 +3,11 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import Cookies from "js-cookie";
-import { Cookie } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import {login as authlogin, setUserId} from '../store/userSlice'
+import authService from '../services/user.appwrite'
+import postAPI from '../pterodactyl/functions/postAPI'
+import getUserByEmail from "../pterodactyl/functions/getUserByEmail";
 
 function Signup() {
   const {
@@ -15,11 +18,56 @@ function Signup() {
   } = useForm();
 
   const navigate = useNavigate();
-  const [erros, setError] = useState(null);
+  const dispatch = useDispatch();
+  const [error, setError] = useState(null);
 
-  const signup = (data) => {
+  const signup = async (data) => {
     console.log(data);
-
+    try {
+      const user = await authService.createAccount({
+        email: data.email,
+        password: data.password,
+        name: data.username,
+      })
+      if(user){
+        console.log('User: ', user)
+        const email = user.email;
+        const password = data.password;
+        console.log('Email: ', email)
+        console.log('Password :', password)
+        //pterodactyl user creation
+        const [pteroResponse, pteroError]  = await postAPI.post( 'https://panel.how2mc.xyz/api/application/users' , {email,  username: data.username, first_name: data.username, last_name: data.username}, 'ptla_aap6jlHVZ8XT6EfIN9sRRwuUZ1QgUNcQz59oE2fDtpX');
+        if(pteroError) {
+          console.error('Error while creating a user account', pteroError)
+          setError("Error while creating a user account")
+          return
+        }
+        console.log('Ptero Response: ', pteroResponse)
+        const session = await authService.login({
+          email,
+          password,
+        })
+        if(session){
+          const pteroUser = await getUserByEmail(email);
+          const pteroUserId = pteroUser[0].attributes.id;
+          localStorage.setItem("email", email);
+          localStorage.setItem("password", password);
+          dispatch(authlogin(user));
+          dispatch(setUserId(pteroUserId));
+          navigate("/");
+        }
+        else{
+          setError("Error while creating a user account")
+          console.error("Error during authentication", error);
+          navigate("/login");
+        }
+      }else{
+        setError("Error while creating a user account")
+      }
+    } catch (error) {
+      console.log("Error while creating a user account", error.message);
+      setError("Error while creating a user account") 
+    }
     localStorage.setItem("email", data.email);
     localStorage.setItem("password", data.password);
     // navigate("/");

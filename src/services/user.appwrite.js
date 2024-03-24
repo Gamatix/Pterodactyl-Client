@@ -20,9 +20,7 @@ export class userService {
         password,
         name
       );
-      if (userAccount) {
-        return this.login({ email, password });
-      } else return userAccount;
+      return userAccount;
     } catch (error) {
       console.log("Error while creating a user account", error.message);
       throw error;

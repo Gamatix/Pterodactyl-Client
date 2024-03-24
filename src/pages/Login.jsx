@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
-import { set, useForm } from "react-hook-form";
-import Cookies from "js-cookie";
+import {  set, useForm } from "react-hook-form";
 import authServices from "../services/user.appwrite";
 import { useDispatch } from "react-redux";
-import { login as authlogin } from "../store/userSlice";
-
+import { login as authlogin, setUserId } from "../store/userSlice";
+import getUserByEmail from "../pterodactyl/functions/getUserByEmail";
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -24,7 +23,12 @@ function Login() {
       const session = await authServices.login({ email, password });
       if (!!session) {
         const user = await authServices.getAccount();
-        if (user) {
+        const pteroUser = await getUserByEmail(email);
+        console.log("Ptero User: ", pteroUser[0]);
+        console.log('Ptero user id: ',pteroUser[0].attributes.id)
+        const id = pteroUser[0].attributes.id;
+        if (user && pteroUser) {
+          dispatch(setUserId(id)); 
           dispatch(authlogin(user));
           localStorage.setItem("password", password);
           localStorage.setItem("email", email);
