@@ -11,7 +11,7 @@ class API {
     console.log("Running getAPI");
     try {
       console.log(url);
-      console.log(bodyData)
+      console.log('Body data : ',bodyData)
       response = await axios.post(url,  bodyData, {
        
        
