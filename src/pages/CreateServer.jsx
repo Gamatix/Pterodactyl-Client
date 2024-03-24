@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
 import apiCall from "../pterodactyl/functions/getAPI";
+import { set } from "react-hook-form";
 
 function SoftwareCard({ img1, img2, name, game, description, user, text }) {
   return (
@@ -52,15 +53,27 @@ function LocationCard({
 
 
 function CreateServer() {
-  function handleLocationClick(locationId, nodes) {
+  async function  handleLocationClick(locationId, nodes) {
 
-    console.log(locationId);
-    console.log(nodes);
+    console.log('Selected Location ID is : ', locationId);
+    console.log( 'All nodes ' , nodes);
     const node = nodes.filter(node => node.attributes.location_id === locationId);
-    console.log(node);
+    console.log('Nodes under', locationId, ' is : ',  node);
     setNodesOfLocation(node);
+    const lInfo = await apiCall.get(`https://panel.how2mc.xyz/api/application/locations/${locationId}`);
+    const locationInfo = lInfo[0].data.attributes;
+    setLocationDetails( locationInfo);
+    
     
   }
+  async function handleNodeDetails(node) {
+    setNodeId(node.attributes.id)
+    console.log('Selected Node ID is: ' , node.attributes.id)
+    const nInfo = await apiCall.get(`https://panel.how2mc.xyz/api/application/nodes/${node.attributes.id}`);
+    console.log('Node Info: ', nInfo[0].data.attributes)
+    setNodeDetails(nInfo[0].data.attributes)
+  }
+ 
   const [locations, setLocations] = useState([]);
   const [locationId, setLocationId] = useState(null);
 
@@ -68,6 +81,16 @@ function CreateServer() {
   const [nodeId, setNodeId] = useState(null);
   
   const[nodesOfLocation, setNodesOfLocation] = useState([]);
+
+
+  const [nodeDeatils, setNodeDetails] = useState([]);
+  const [locationDetails, setLocationDetails] = useState([])
+  useEffect(() => {
+    console.log('Location Details: ', locationDetails);
+  }, [locationDetails]);
+  useEffect(() => {
+    console.log('Node Details: ', nodeDeatils);
+  }, [nodeDeatils]);
   async function getLocations(){
     const [locationResponse, loactionError] = await apiCall.get('https://panel.how2mc.xyz/api/application/locations');
     if (loactionError) {
@@ -121,6 +144,7 @@ function CreateServer() {
       <div className="flex flex-row mt-4">
         <div className="flex flex-col w-[600px] mr-2 ">
           <TextField
+          htmlFor="CPU"
             id="outlined-basic"
             label="CPU (%)"
             variant="outlined"
@@ -128,6 +152,7 @@ function CreateServer() {
             className="mt-2 w-[600px] bg-neutral-200 rounded-lg text-neutral-800 active:border-neutral-500  focus:border-neutral-500 "
           />
           <TextField
+          htmlFor="Memory"
             style={{ marginTop: "10px" }}
             id="outlined-basic"
             label="Memory / RAM (MB)"
@@ -136,6 +161,7 @@ function CreateServer() {
             className="mt-2 w-[600px] bg-neutral-200 rounded-lg text-neutral-800 active:border-neutral-500  focus:border-neutral-500 "
           />
           <TextField
+          htmlFor="Disk Space"
             style={{ marginTop: "10px" }}
             id="outlined-basic"
             label="Disk Space (MB)"
@@ -146,6 +172,7 @@ function CreateServer() {
         </div>
         <div className="flex flex-col w-[600px] mr-2 ">
           <TextField
+          htmlFor="Ports"
             id="outlined-basic"
             label="Additional Ports"
             variant="outlined"
@@ -153,6 +180,7 @@ function CreateServer() {
             className="mt-2 w-[600px] bg-neutral-200 rounded-lg text-neutral-800 active:border-neutral-500  focus:border-neutral-500 "
           />
           <TextField
+          htmlFor="Backups"
             style={{ marginTop: "10px" }}
             id="outlined-basic"
             label="Backups"
@@ -161,6 +189,7 @@ function CreateServer() {
             className="mt-2 w-[600px] bg-neutral-200 rounded-lg text-neutral-800 active:border-neutral-500  focus:border-neutral-500 "
           />
           <TextField
+          htmlFor="Databases"
             style={{ marginTop: "10px" }}
             id="outlined-basic"
             label="Databases"
@@ -199,9 +228,11 @@ function CreateServer() {
 
           return (
             <div className="ml-2"> 
-              <Button variant="contained" onClick={() => {
-                setNodeId(node.attributes.id)
-                console.log(node.attributes.id)
+              <Button
+                key={node.attributes.id}
+              variant="contained" onClick={() => {
+                handleNodeDetails(node)
+                
               }}>
                 {node.attributes.name}
               </Button>
