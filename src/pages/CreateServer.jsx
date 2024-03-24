@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
 import apiCall from "../pterodactyl/functions/getAPI";
-import { set } from "react-hook-form";
+
 function SoftwareCard({ img1, img2, name, game, description, user, text }) {
   return (
     <button className="active:shadow-neutral-600 focus:shadow-neutral-600 hover:shadow hover:shadow-neutral-700 overflow-hidden  ml-2">
@@ -49,15 +49,7 @@ function LocationCard({
   );
 }
 
-function handleLocationClick(locationId, nodes) {
 
-  console.log(locationId);
-  console.log(nodes);
-  const node = nodes.filter(node => node.attributes.location_id === locationId);
-  console.log(node);
-  setNodesOfLocation(node);
-  
-}
 
 function CreateServer() {
   function handleLocationClick(locationId, nodes) {
