@@ -1,9 +1,10 @@
 import React from "react";
 import Card from "@mui/material/Card";
-
+import { useNavigate } from "react-router-dom";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
+import deleteAPI from "../pterodactyl/functions/deleteAPI";
 
 function LongCard({
   img,
@@ -18,9 +19,24 @@ function LongCard({
   databases,
   ports,
   backups,
+  onClick,
+  id,
+  onDelete,
+  onOpen,
 }) {
+  const navigate  = useNavigate()
+  // async function handleDeleteServer(event){
+  //   event.stopPropagation(); // Prevent triggering onClick of the parent div
+  //   console.log("Delete server with id: ", id)
+  //   const [deleteResponse, deleteError]  = await deleteAPI.delete(`https://panel.how2mc.xyz/api/application/servers/${id}`)
+  //   if(deleteError){
+  //     console.error("Error deleting server: ", deleteError)
+  //   }
+  //   console.log("Server deleted: ", deleteResponse)
+  //   onDelete()
+  // }
   return (
-    <div className="cursor-pointer w-[345px] hover:shadow-sm  hover:shadow-gray-600">
+    <div onClick={onClick} className="cursor-pointer w-[345px] hover:shadow-sm  hover:shadow-gray-600">
       <Card className="shadow-gray-300" sx={{ maxWidth: 345 }}>
         <CardMedia sx={{ height: 140 }} image={img} title="green iguana" />
         <CardContent>
@@ -46,8 +62,8 @@ function LongCard({
             </div>
             <div className="ml-auto mt-2">
               <Button size="small">Edit</Button>
-              <Button size="small">Open</Button>
-              <Button size="small">Delete</Button>
+              <Button size="small" onClick={() => onOpen(id)}>Open</Button>
+              <Button size="small" onClick={() => onDelete(id)}>Delete</Button>
             </div>
           </div>
         </CardContent>

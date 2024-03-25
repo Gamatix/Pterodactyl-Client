@@ -13,8 +13,6 @@ class API {
       console.log(url);
       console.log('Body data : ',bodyData)
       response = await axios.post(url,  bodyData, {
-       
-       
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
