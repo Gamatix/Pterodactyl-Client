@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useDeferredValue, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import {  set, useForm } from "react-hook-form";
@@ -6,10 +6,12 @@ import authServices from "../services/user.appwrite";
 import { useDispatch } from "react-redux";
 import { login as authlogin, setUserId } from "../store/userSlice";
 import getUserByEmail from "../pterodactyl/functions/getUserByEmail";
+import { DNA } from "react-loader-spinner"; 
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
   const {
     register,
     handleSubmit,
@@ -39,14 +41,27 @@ function Login() {
       setError(error.message);
     }
   };
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, [])
 
   return (
+    loading ? <div className="flex flex-row h-screen justify-center items-center"><DNA
+    visible={true}
+    height="80"
+    width="80"
+    ariaLabel="dna-loading"
+    wrapperStyle={{}}
+    wrapperClass="dna-wrapper"
+    /> </div>:
     <div className="w-screen h-screen flex flex-col bg-[rgb(240,240,240)]">
       <div className=" w-[900px] h-[700px] flex m-auto  bg-[rgb(168,152,152)] rounded-lg  hover:shadow-md hover:shadow-red-400 flex-col  ">
         <div className="flex flex-col justify-center items-center">
           <div className="w-1/2 h-1/2  bg-[rgb(240,240,240)] rounded-lg mt-16">
             <img
-              src="https://source.unsplash.com/400x200?server"
+              src="https://images.unsplash.com/photo-1572890017012-5cd15e03c670?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=200&ixid=MnwxfDB8MXxyYW5kb218MHx8c2VydmVyfHx8fHx8MTcxMTQ1MTYwMw&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=400"
               className="w-full h-full rounded-lg"
             />
           </div>

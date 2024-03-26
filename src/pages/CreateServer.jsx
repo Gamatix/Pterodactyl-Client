@@ -5,10 +5,10 @@ import { Button } from "@mui/material";
 import apiCall from "../pterodactyl/functions/getAPI";
 import postAPI from "../pterodactyl/functions/postAPI";
 import { useSelector } from "react-redux";
-import { json, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 
-
-
+import { ThreeDots } from "react-loader-spinner";
+import  getuserserver from "../pterodactyl/functions/getUsersServer"
 
 function LocationCard({
   img,
@@ -42,6 +42,8 @@ function LocationCard({
 }
 
 function CreateServer() {
+
+  const [isLoading, setIsLoading] = useState(true);
   //navigate
   const navigate = useNavigate();
   const [totalMemory, setTotalMemory] = useState(0);
@@ -55,41 +57,48 @@ function CreateServer() {
    const [totalServer, setTotalServer] = useState(0);
   //get users server info
   async function getUsersServer() {
-    const [response, error] = await apiCall.get(
-      "https://panel.how2mc.xyz/api/application/servers"
-    );
-    console.log('Users Server: ', response.data.data)
+    // const [response, error] = await apiCall.get(
+    //   "https://panel.how2mc.xyz/api/application/servers"
+    // );
+    const [response, error] = await getuserserver(localStorage.email)
+    
     if (error) {
       console.error("Error while getting users server", error);
       return;
     }
-    console.log("Users Server: ", response.data.data);
-    setTotalServer(response.data.length);
+    if(response === null){
+      return;
+    }
+    console.log(response)
+    
+    console.log('Users Server: ', response)
+    
+    setTotalServer(response.length);
     console.log("Total Server: ", totalServer);
 
     //get the total memory, cpu and disk
-    const totalMemory = response.data.data.reduce((acc, server) => {
+    const totalMemory = response.reduce((acc, server) => {
       return acc + server.attributes.limits.memory;
     }, 0);
 
-    const totalCPU = response.data.data.reduce((acc, server) => {
+    const totalCPU = response.reduce((acc, server) => {
       return acc + server.attributes.limits.cpu;
     }, 0);
 
-    const totalDisk = response.data.data.reduce((acc, server) => {
+    const totalDisk = response.reduce((acc, server) => {
       return acc + server.attributes.limits.disk;
     }, 0);
 
     // get total port, backup and database
-    const totalPort = response.data.data.reduce((acc, server) => {
+    const totalPort = response.reduce((acc, server) => {
       return acc + server.attributes.feature_limits.allocations;
     }, 0);
 
-    const totalBackup = response.data.data.reduce((acc, server) => {
+    const totalBackup = response.reduce((acc, server) => {
       return acc + server.attributes.feature_limits.backups;
     }, 0);
 
-    const totalDatabase = response.data.data.reduce((acc, server) => {
+    const totalDatabase = response.reduce((acc, server) => {
       return acc + server.attributes.feature_limits.databases;
     }, 0);
 
@@ -254,9 +263,16 @@ function CreateServer() {
 
   const [errorMessage, setErrorMessage] = useState(null);
 
+    // setTimeout
+
+    useEffect(() => {
+      setTimeout(()=>{
+        setIsLoading(false)
+      }, 1000)
+    }, [])
 
 
-
+    const [errorOnServerCreate, setErrorOnServerCreate] = useState(null);
   async function handleSubmit() {
     console.log("Server Name: ", serverName);
     console.log("CPU: ", cpu);
@@ -416,6 +432,7 @@ function CreateServer() {
       "ptla_aap6jlHVZ8XT6EfIN9sRRwuUZ1QgUNcQz59oE2fDtpX"
     );
     if (error) {
+      setErrorOnServerCreate(error);
       console.error("Error while creating server", error.message);
       return;
     }
@@ -450,7 +467,19 @@ function CreateServer() {
     console.log("Backups: ", backups);
     console.log("Databases: ", databases);
   }, [serverName, cpu, memory, diskSpace, additionalPorts, backups, databases]);
+
+  
   return (
+    isLoading ? (<div className="flex flex-row h-screen justify-center items-center"><ThreeDots
+      visible={true}
+      height="80"
+      width="80"
+      color="#4fa94d"
+      radius="9"
+      ariaLabel="three-dots-loading"
+      wrapperStyle={{}}
+      wrapperClass=""
+      /></div>) :(
     <div className="ml-2 mt-2 bg-[rgb(240,240,240)] flex flex-col flex-1 pb-4  pl-2 pt-1 ">
       <div>
         <h2 className="font-bold text-3xl">CreateServer</h2>
@@ -674,8 +703,14 @@ function CreateServer() {
       {errorMessage && (
         <div className="error ml-auto mr-auto text-red-700">{errorMessage}</div>
       )}
+      {
+        errorOnServerCreate && (
+          <div className="error ml-auto mr-auto text-red-700">{errorOnServerCreate && errorOnServerCreate.message === 'Request failed with status code 422' ? 'Node is Full' : 'Something went wrong while creating a server'}</div>
+        )
+      }
     </div>
-  );
+    )
+    );
 }
 
 export default CreateServer;

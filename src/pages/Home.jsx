@@ -6,12 +6,15 @@ import { GoCpu } from "react-icons/go";
 import { FaFloppyDisk } from "react-icons/fa6";
 import { AiOutlineReload } from "react-icons/ai";
 import LongCard from "../components/LongCard";
-
+import {Bars} from 'react-loader-spinner'
 import getUsersServer from "../pterodactyl/functions/getUsersServer.js";
 import { useSelector } from "react-redux";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import deleteAPI from "../pterodactyl/functions/deleteAPI.js";
+import {InfinitySpin} from 'react-loader-spinner'
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [res, setRes] = useState([]);
@@ -82,15 +85,34 @@ function Home() {
       setRes(response);
      
   }
-   // Added handleDeleteServer function
-   
-  
-  //  const handleDeleteServer = () => {
-  //    setKey(prevKey => Math.random());
-  //    console.log("Server rerendered," , key);
-  //    this.setState({key: Math.random()})
-  //  }
+  const [loadingServer, setLoadingServer] = useState(false)
+  async function reloadServer(){
+    setLoadingServer(true)
+    console.log("Reloading servers")
+    
+    const [response, error] = await getUsersServer(email);
+    setLoadingServer(false)
+  }
+  const navigate = useNavigate()
+  async function handleEditServer(id){
+    console.log("Edit server with id: ", id)
+    const serverInfo = res[0].find(server => server.attributes.id === id);
+    console.log("Server info: ", serverInfo)
+
+    navigate(`/edit-server/${id}`)
+  }
+
   return (
+    isLoading ? (<div className="flex flex-row justify-center items-center h-screen"><Bars
+     className=""
+      height="80"
+      width="80"
+      color="#4fa94d"
+      ariaLabel="bars-loading"
+      wrapperStyle={{}}
+      wrapperClass=""
+      visible={true}
+      /></div> ): (
     <div key={key} className="flex flex-col overflow-y-auto bg-neutral-100 rounded-sm pb-4 ">
       <div className="px-2 py-2 ">
         {(
@@ -141,50 +163,23 @@ function Home() {
 
       <div className="flex flex-row gap-2 items-center font-bold text-xl ml-2 mt-0  ">
         Your Servers
-        <AiOutlineReload className="translate-y-0.5 cursor-pointer" />
+        <AiOutlineReload onClick={reloadServer} className="translate-y-0.5 cursor-pointer" />
       </div>
       <div className="ml-2 mt-1 shadow-neutral-200 broder-b border-neutral-200 flex flex-row gap-2">
-        {isLoading ? (
-          <div>
-            <SkeletonTheme
-              baseColor="#ccc"
-              highlightColor="#444"
-              height={400}
-              width={350}
-            >
-              <div>
-                <p>
-                  <Skeleton
-                    baseColor="#ccc"
-                    highlightColor="#444"
-                    className="mr-2"
-                    height={150}
-                  />
-                  <Skeleton
-                    baseColor="#ccc"
-                    highlightColor="#444"
-                    className="mr-2"
-                    height={60}
-                  />
-                  <Skeleton
-                    baseColor="#ccc"
-                    highlightColor="#444"
-                    className="mr-2"
-                    height={60}
-                  />
-                  <Skeleton
-                    baseColor="#ccc"
-                    highlightColor="#444"
-                    className="mr-2"
-                    height={40}
-                  />
-                </p>
-              </div>
-            </SkeletonTheme>
+        {loadingServer ? (
+          <div className="flex flex-col  justify-center items-center  w-[345px]">
+          <InfinitySpin
+          visible={true}
+          width="200"
+          color="#4fa94d"
+          ariaLabel="infinity-spin-loading"
+          />
+          <div className="font-bold text-xl">Reloading servers...</div>
           </div>
         ) : res[0] && res[0].length >= 1 ? (
           res[0].map((server) => (
             <LongCard
+              onEdit = {handleEditServer}
               className="shadow-sm sgadow-neutral-200"
               img="https://i0.wp.com/news.onepercentclub.io/wp-content/uploads/2024/03/lars-kienle-IlxX7xnbRF8-unsplash.jpg?resize=1024%2C575&ssl=1"
               name={server.attributes.name}
@@ -206,17 +201,24 @@ function Home() {
             />
           ))
         ) : (
-          <Skeleton
-            baseColor="#ccc"
-            highlightColor="#444"
-            height={260}
-            width={350}
-          />
+          <div className="w-full  ml-auto mr-auto mt-4 flex flex-col items-center">
+            <img src="https://dash.slicehosting.tech/images/empty.svg" className="w-52"/>
+            <h1 className="text-black text-lg">You don't have any servers yet.</h1>
+            <Link to="/create-server">
+            <div className="mt-4  ">
+            <Button className="decoration bg-gradient-to-r from-blue-500 to-blue-700 text-white px-5 py-2 rounded-md mt-5 hover:scale-105 transition shadow-md" variant="contained" color="primary"> 
+            Create a server
+          </Button>
+            </div>
+            </Link>
+          </div>
         )}
       </div>
       
     </div>
-  );
+  
+  )
+        
+  )
 }
-
 export default Home;

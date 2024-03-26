@@ -1,8 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PostCard from "../components/PostCard";
-
+import { Vortex } from "react-loader-spinner";
 function Blogs() {
+  const [loadng, setLoading] = React.useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }
+  , []);
   return (
+    loadng ? (<div className="h-screen flex flex-row justify-center items-center"><Vortex
+      visible={true}
+      height="80"
+      width="80"
+      ariaLabel="vortex-loading"
+      wrapperStyle={{}}
+      wrapperClass="vortex-wrapper"
+      colors={['red', 'green', 'blue', 'yellow', 'orange', 'purple']}
+      /></div>) :
     <div className="flex flex-col ml-2 mr-2 bg-[rgb(240,240,240)] h-[750px] p-2 rounded-lg">
       <div className="font-bold text-3xl">
         <h1>Blogs</h1>
@@ -64,6 +81,7 @@ function Blogs() {
         />
       </div>
     </div>
+    
   );
 }
 

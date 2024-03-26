@@ -20,7 +20,7 @@ import NotFoundPage from "./pages/404.jsx";
 import { Provider } from "react-redux";
 import store from "./store/store.js";
 import Protected from "./Protected/Protected.jsx";
-import { Shop } from "@mui/icons-material";
+import EditServer from "./pages/EditServer.jsx";
 const router = createBrowserRouter([
   {
     path: "*",
@@ -98,6 +98,14 @@ const router = createBrowserRouter([
           </Protected>
         ),
       },
+      {
+        path: `/edit-server/:id`,
+        element: (
+          <Protected>
+            <EditServer />
+          </Protected>
+        ),
+      }
     ],
   },
   {
@@ -116,6 +124,7 @@ const router = createBrowserRouter([
       </Protected>
     ),
   },
+  
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(

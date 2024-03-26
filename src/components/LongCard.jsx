@@ -23,6 +23,7 @@ function LongCard({
   id,
   onDelete,
   onOpen,
+  onEdit,
 }) {
   const navigate  = useNavigate()
   // async function handleDeleteServer(event){
@@ -61,7 +62,7 @@ function LongCard({
               </div>
             </div>
             <div className="ml-auto mt-2">
-              <Button size="small">Edit</Button>
+              <Button size="small" onClick={() => onEdit(id)}>Edit</Button>
               <Button size="small" onClick={() => onOpen(id)}>Open</Button>
               <Button size="small" onClick={() => onDelete(id)}>Delete</Button>
             </div>

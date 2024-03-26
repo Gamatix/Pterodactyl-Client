@@ -22,7 +22,7 @@ async function getUsersServer(email) {
   const server = serverResponse.data.data.filter(
     (s) => s.attributes.user === userid
   );
-  console.log("Server: ", server.attributes);
+  console.log("Server: ", server);
   if (!server) {
     return [null, serverError];
   }

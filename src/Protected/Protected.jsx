@@ -1,4 +1,4 @@
-import Cookies from "js-cookie";
+
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import authService from "../services/user.appwrite";
 import { login as authlogin } from "../store/userSlice";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
+import {Bars, RotatingTriangles} from 'react-loader-spinner'
 export default function Protected({ children }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -41,21 +42,33 @@ export default function Protected({ children }) {
     
     
     // Moved the logic from the second useEffect here
+    
+  }
+  useEffect(() => {
+    
+
+    (async () => {
+      await checkAuth();
+    })()
     if (!authStatus) {
+      console.log(authStatus)
       console.log("authStatus is false");
       localStorage.removeItem("email");
       localStorage.removeItem("password");
       navigate("/login");
     }
     setLoaded(true);
-  }
-  useEffect(() => {
-    
-
-    checkAuth();
   }, []);
 
-  return !loaded ? LoadingIndicator() : children;
+  return !loaded ? <div className="flex flex-row h-screen justify-center items-center"><RotatingTriangles
+  visible={true}
+  height="80"
+  width="80"
+  color="#4fa94d"
+  ariaLabel="rotating-triangles-loading"
+  wrapperStyle={{}}
+  wrapperClass=""
+  /></div>: children;
 }
 
 function LoadingIndicator() {
