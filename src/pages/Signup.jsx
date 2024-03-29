@@ -47,7 +47,7 @@ function Signup() {
         console.log('Email: ', email)
         console.log('Password :', password)
         //pterodactyl user creation
-        const [pteroResponse, pteroError]  = await postAPI.post( 'https://panel.how2mc.xyz/api/application/users' , {email,  username: data.username, first_name: data.username, last_name: data.username}, 'ptla_aap6jlHVZ8XT6EfIN9sRRwuUZ1QgUNcQz59oE2fDtpX');
+        const [pteroResponse, pteroError]  = await postAPI.post( `${import.meta.env.VITE_PTERODACTYL_URL}/users` , {email,  username: data.username, first_name: data.username, last_name: data.username}, 'ptla_aap6jlHVZ8XT6EfIN9sRRwuUZ1QgUNcQz59oE2fDtpX');
         if(pteroError) {
           console.error('Error while creating a user account', pteroError)
           await authService.deleteAccount(user.$id);
@@ -68,7 +68,7 @@ function Signup() {
           if(userDataUplodError){
             console.error('Error while creating a user account', userDataUplodError)
             await authService.deleteAccount(user.$id);
-            await postAPI.delete(`https://panel.how2mc.xyz/api/application/users/${pteroResponse.id}`, 'ptla_aap6jlHVZ8XT6EfIN9sRRwuUZ1QgUNcQz59oE2fDtpX');
+            await postAPI.delete(`${import.meta.env.VITE_PTERODACTYL_URL}/users/${pteroResponse.id}`, import.meta.env.VITE_PTERODACTYL_API_KEY);
             setError("Error while creating a user account")
 
             return
@@ -111,7 +111,7 @@ function Signup() {
           console.log('New Referral Document: ', newRefDoc)
           if( !newRefDoc){
             console.error('Error while creating referral document', newRefDocError)
-            await postAPI.delete(`https://panel.how2mc.xyz/api/application/users/${pteroResponse.id}`, 'ptla_aap6jlHVZ8XT6EfIN9sRRwuUZ1QgUNcQz59oE2fDtpX');
+            await postAPI.delete(`${import.meta.env.VITE_PTERODACTYL_URL}/users/${pteroResponse.id}`, import.meta.env.VITE_PTERODACTYL_API_KEY);
             await authService.deleteAccount(user.$id);
             return;
           }
