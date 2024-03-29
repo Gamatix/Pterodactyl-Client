@@ -367,7 +367,7 @@ function CreateServer() {
 
     //Egg details
     const [eggDetails, eggDetailsError] = await apiCall.get(
-      `https://panel.how2mc.xyz/api/application/nests/${nestId}/eggs/${eggId}?include=variables,nest,servers,config,script`
+      `${import.meta.env.VITE_PTERODACTYL_URL}/nests/${nestId}/eggs/${eggId}?include=variables,nest,servers,config,script`
     );
 
     if (eggDetailsError) {
@@ -427,9 +427,9 @@ function CreateServer() {
 
     // send the request
     const [response, error] = await postAPI.post(
-      "https://panel.how2mc.xyz/api/application/servers",
+      `${import.meta.env.VITE_PTERODACTYL_URL}/servers`,
       body,
-      "ptla_aap6jlHVZ8XT6EfIN9sRRwuUZ1QgUNcQz59oE2fDtpX"
+      import.meta.env.VITE_PTERODACTYL_API_KEY
     );
     if (error) {
       setErrorOnServerCreate(error);
@@ -635,9 +635,9 @@ function CreateServer() {
         <div className="font-bold text-xl mt-2 mb-1">Server software</div>
         <div className="pl-2 ml-2  flex flex-row mt-5">
           {nests &&
-            nests.map((nest) => {
+            nests.map((nest, i) => {
               return (
-                <div className="mr-2 ">
+                <div className="mr-2 " key={i}>
                   <Button
                     variant="contained"
                     color="secondary"

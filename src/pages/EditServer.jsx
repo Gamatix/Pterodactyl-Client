@@ -31,7 +31,7 @@ import patchAPI from '../pterodactyl/functions/patchAPI'
 
     async function getServer(){
         setError(null)
-        const [serverInfo, serverError] = await apiCall.get(`https://panel.how2mc.xyz/api/application/servers/${id}`)
+        const [serverInfo, serverError] = await apiCall.get(`${import.meta.env.VITE_PTERODACTYL_URL}/servers/${id}`)
         if(serverError){
             console.error("Error getting server: ", serverError)
             setError(serverError)
@@ -232,7 +232,7 @@ import patchAPI from '../pterodactyl/functions/patchAPI'
             setUpdateError('Minimum resources not met')
             return
         }
-        const [updateResponse, updateError] = await patchAPI.patch(`https://panel.how2mc.xyz/api/application/servers/${id}/build`, bodyData)
+        const [updateResponse, updateError] = await patchAPI.patch(`${import.meta.env.VITE_PTERODACTYL_URL}/servers/${id}/build`, bodyData)
         if(updateError){
             console.error("Error updating server: ", updateError)
             setUpdateError(updateError.message)

@@ -24,7 +24,7 @@ function Panel() {
   }
   async function resetPass() {
     const [userResponse, userError] = await apiCall.get(
-      `https://panel.how2mc.xyz/api/application/users/${userId}`
+      `${import.meta.env.VITE_PTERODACTYL_URL}/users/${userId}`
     );
     if (userError) {
       console.error("Error while getting user", userError);
@@ -35,7 +35,7 @@ function Panel() {
     let password = randomPassword();
     console.log("Password: ", password);
     const [response, error] = await patchAPI.patch(
-      `https://panel.how2mc.xyz/api/application/users/${userId}`,
+      `${import.meta.env.VITE_PTERODACTYL_URL}/users/${userId}`,
       
         {
           email: user.email,

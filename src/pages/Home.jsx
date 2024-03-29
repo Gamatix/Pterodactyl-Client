@@ -94,7 +94,7 @@ function Home() {
     const id = currentServerId;
     console.log("Delete server with id: ", id)
     
-    const [deleteResponse, deleteError]  = await deleteAPI.delete(`https://panel.how2mc.xyz/api/application/servers/${id}`)
+    const [deleteResponse, deleteError]  = await deleteAPI.delete(`${import.meta.env.VITE_PTERODACTYL_URL}/servers/${id}`)
     if(deleteError){
       console.error("Error deleting server: ", deleteError)
     }
