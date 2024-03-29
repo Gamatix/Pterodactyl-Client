@@ -8,6 +8,7 @@ import productService from "../services/products.appwrite";
 import classNames from "classnames";
 import axios from "axios";
 import { set } from "react-hook-form";
+import { FaBullseye } from "react-icons/fa6";
 function Card({ text, children, coins, resource, param }) {
   return (
     <div>
@@ -38,7 +39,8 @@ function SaleCard({
   oneTime = false,
   pid,
   id,
-  onSuccess
+  onSuccess,
+  onError
 }) {
   
   
@@ -94,6 +96,9 @@ function SaleCard({
           
           onSuccess()
         }
+        else{
+          onError()
+        }
 
 
       },
@@ -111,13 +116,14 @@ function SaleCard({
   };
   var rzp1 = new window.Razorpay(options);
   rzp1.on('payment.failed', function (response){
-          alert(response.error.code);
-          alert(response.error.description);
-          alert(response.error.source);
-          alert(response.error.step);
-          alert(response.error.reason);
-          alert(response.error.metadata.order_id);
-          alert(response.error.metadata.payment_id);
+          // alert(response.error.code);
+          // alert(response.error.description);
+          // alert(response.error.source);
+          // alert(response.error.step);
+          // alert(response.error.reason);
+          // alert(response.error.metadata.order_id);
+          // alert(response.error.metadata.payment_id);
+          onError()
   });
   rzp1.open();
     e.preventDefault();
@@ -184,7 +190,11 @@ function Shops() {
     console.log(products);
     setProducts(products.documents);
   }
-
+  const [perror, setPerror] = useState(false);
+  function onError(){
+      
+      setPerror(true)
+  }
   useEffect(() => {
     getAllProducts();
 
@@ -272,6 +282,7 @@ function Shops() {
                       pid={product.$id}
                       id={product.productId}
                       onSuccess={onSuccess}
+                      onError={onError}
                     />
                   );
                 })}
@@ -311,6 +322,24 @@ function Shops() {
                     {
                       setopen(false)
                       setSuccess(false)
+                    }
+                  } variant="contained" className="bg-green-500 text-white">Close</Button>
+                </div>
+              </div>
+            </Dialog>
+          </div>
+        : null
+      }
+      {
+        perror  ?
+          <div>
+            <Dialog open={perror}  >
+              <div className=" rounded-lg w-[500px] h-[150px] flex flex-col items-center justify-center bg-neutral-400">
+                <div className="text-xl font-bold text-black">Payment Unsuccessful</div>
+                <div className="mt-4">
+                  <Button onClick={() => 
+                    {
+                      setPerror(false)
                     }
                   } variant="contained" className="bg-green-500 text-white">Close</Button>
                 </div>
