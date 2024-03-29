@@ -14,9 +14,30 @@ import "react-loading-skeleton/dist/skeleton.css";
 import deleteAPI from "../pterodactyl/functions/deleteAPI.js";
 import {InfinitySpin} from 'react-loader-spinner'
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
+import { Button, Modal, Typography, Box } from "@mui/material";
+import ConfirmModal from "../components/ConfirmModal.jsx";
+import { set } from "react-hook-form";
 function Home() {
+  const [currentServerId, setCurrentServerId] = useState(null);
+
+  const [open, setOpen] = useState(false);
+  const handleClose = () => setOpen(false);
+  const handleOpen = () => setOpen(true);
+  const [confirm, setConfirm] = useState(false);
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
+
   const [isLoading, setIsLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const [res, setRes] = useState([]);
   const email = useSelector((state) => state.user.userData?.email);
   const userId = useSelector((state) => state.user.userId);
@@ -68,10 +89,10 @@ function Home() {
     console.log("Opened server: ", openedServer.attributes.identifier)
     window.open(`https://panel.how2mc.xyz/server/${openedServer.attributes.identifier}`, "_blank")
   }
-
-  async function handleDeleteServer(id){
-    
-     console.log("Delete server with id: ", id)
+  async function serverDelete(){
+    setOpen(false)
+    const id = currentServerId;
+    console.log("Delete server with id: ", id)
     
     const [deleteResponse, deleteError]  = await deleteAPI.delete(`https://panel.how2mc.xyz/api/application/servers/${id}`)
     if(deleteError){
@@ -83,6 +104,13 @@ function Home() {
      const response = await getUsersServer(email);
       console.log("This res1: ", response);
       setRes(response);
+      setCurrentServerId(null)
+  }
+  async function handleDeleteServer(id){
+    setCurrentServerId(id)
+    console.log("Delete server with id: ", id)
+    handleOpen()
+    
      
   }
   const [loadingServer, setLoadingServer] = useState(false)
@@ -214,7 +242,23 @@ function Home() {
           </div>
         )}
       </div>
-      
+      <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          Are you sure you want to delete the server?
+        </Typography>
+       
+       <div className="flex flex-row gap-4 mt-2">
+       <Button variant="contained" color="error" onClick={ () => serverDelete() }>Yes</Button>
+       <Button variant="contained" color="secondary" onClick={handleClose}>No</Button>
+        </div>
+      </Box>
+    </Modal>
     </div>
   
   )

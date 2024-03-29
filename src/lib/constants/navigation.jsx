@@ -43,9 +43,9 @@ export const Sidebar_Top_Items = [
 
 export const Sidebar_Bottom_Items = [
   {
-    key: "support",
-    label: "Support",
-    path: "/support",
+    key: "contact",
+    label: "Contact",
+    path: "/contact",
     icon: <ContactSupportIcon />,
   },
 ];

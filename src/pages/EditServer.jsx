@@ -142,9 +142,17 @@ import patchAPI from '../pterodactyl/functions/patchAPI'
                 await getUsersTotalResources()
                 await getUsersCurrentResources()
             })()
+            ;(async () => {
+                await getRemainingResources()
+            })()
 
         }
     }, [usersServer])
+    // useEffect(() => {
+    //     ;(async () => {
+    //         await getRemainingResources()
+    //     })()
+    // }, [totalCPU, totalMemory, totalDisk, totalDatabases, totalAllocations, totalBackups])
 
     useEffect(() => {
         console.log('CPU: ', cpu)
@@ -196,11 +204,7 @@ import patchAPI from '../pterodactyl/functions/patchAPI'
         console.log("Remaining Allocations: ", remainingAllocations)
         console.log("Remaining Backups: ", remainingBackups)
     }
-    useEffect(() => {
-        ;(async () => {
-            await getRemainingResources()
-        })()
-    }, [totalCPU, totalMemory, totalDisk, totalDatabases, totalAllocations, totalBackups])
+
     
     const navigate = useNavigate()
     async function handleUpdateServer(){
@@ -354,6 +358,7 @@ import patchAPI from '../pterodactyl/functions/patchAPI'
             updateError && <div className='text-red-500'>{updateError}</div>
         }
     </div>
+    
     </div>
   )
 }

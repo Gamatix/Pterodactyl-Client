@@ -1,14 +1,15 @@
 import { Button } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {login as authlogin, setUserId} from '../store/userSlice'
 import authService from '../services/user.appwrite'
 import postAPI from '../pterodactyl/functions/postAPI'
 import getUserByEmail from "../pterodactyl/functions/getUserByEmail";
-
+import userdata from "../services/userData.appwrite";
+import referral from "../services/referral.appwrite";
 function Signup() {
   const {
     register,
@@ -21,8 +22,18 @@ function Signup() {
   const dispatch = useDispatch();
   const [error, setError] = useState(null);
 
+  const {referralCode} = useParams()
+  console.log('Referal Code: ', referralCode)
+
   const signup = async (data) => {
     console.log(data);
+    let referral_code = data.referralCode;
+    console.log('Referral Code: ',  referral_code)
+    
+   
+    
+
+   
     try {
       const user = await authService.createAccount({
         email: data.email,
@@ -39,21 +50,72 @@ function Signup() {
         const [pteroResponse, pteroError]  = await postAPI.post( 'https://panel.how2mc.xyz/api/application/users' , {email,  username: data.username, first_name: data.username, last_name: data.username}, 'ptla_aap6jlHVZ8XT6EfIN9sRRwuUZ1QgUNcQz59oE2fDtpX');
         if(pteroError) {
           console.error('Error while creating a user account', pteroError)
+          await authService.deleteAccount(user.$id);
           setError("Error while creating a user account")
           return
         }
+       
         console.log('Ptero Response: ', pteroResponse)
         const session = await authService.login({
           email,
           password,
         })
         if(session){
+          console.log('Session: ', session)
+          const [userResponse , userDataUplodError] = await userdata.uploadUserData();
+          
+          // if error delete the account and pterodactyl user
+          if(userDataUplodError){
+            console.error('Error while creating a user account', userDataUplodError)
+            await authService.deleteAccount(user.$id);
+            await postAPI.delete(`https://panel.how2mc.xyz/api/application/users/${pteroResponse.id}`, 'ptla_aap6jlHVZ8XT6EfIN9sRRwuUZ1QgUNcQz59oE2fDtpX');
+            setError("Error while creating a user account")
+
+            return
+          }
+          console.log('userresponse: ', userResponse)
+          console.log('User Response: ', userResponse)
+          if(!userResponse) {
+            setError("Error while creating a user account")
+            await authService.deleteAccount(user.$id);
+            return;
+          }
+
           const pteroUser = await getUserByEmail(email);
           const pteroUserId = pteroUser[0].attributes.id;
+          
+          
           localStorage.setItem("email", email);
           localStorage.setItem("password", password);
           dispatch(authlogin(user));
+          
           dispatch(setUserId(pteroUserId));
+          const [ifReferralCodeExists , referralCodeError] = await referral.getReferralDocument(referral_code);
+          console.log('Referral Code Exists: ', ifReferralCodeExists)
+          if(referralCodeError || !ifReferralCodeExists){
+            referral_code = null;
+            navigate("/");
+            
+          }
+          const referralDocument = ifReferralCodeExists
+          console.log('Referral Document: ', referralDocument)
+          let referedUserId = referralDocument.documents[0].refferedUserId
+
+          referedUserId.push(user.$id);
+          const [uploadResponse, uploadError] = await referral.updateReferralDocument(referralDocument.documents[0].$id, {refferedUserId: referedUserId})
+          if(uploadError){
+            console.error('Error while updating referral document', uploadError)
+            navigate("/");
+          }
+          const [newRefDoc, newRefDocError] = await referral.createReferralDocument(user.$id)
+          console.log('New Referral Document: ', newRefDoc)
+          if( !newRefDoc){
+            console.error('Error while creating referral document', newRefDocError)
+            await postAPI.delete(`https://panel.how2mc.xyz/api/application/users/${pteroResponse.id}`, 'ptla_aap6jlHVZ8XT6EfIN9sRRwuUZ1QgUNcQz59oE2fDtpX');
+            await authService.deleteAccount(user.$id);
+            return;
+          }
+
           navigate("/");
         }
         else{
@@ -72,6 +134,14 @@ function Signup() {
     localStorage.setItem("password", data.password);
     // navigate("/");
   };
+
+  const [refCode, setRefCode] = useState('')
+  useEffect(() => {
+    if(referralCode){
+      console.log('Referal Code: ', referralCode)
+      setRefCode(referralCode)
+    }
+  }, [refCode])
 
   return (
     <div className="w-screen h-screen flex flex-col bg-[rgb(240,240,240)]">
@@ -138,6 +208,13 @@ function Signup() {
                     <br />
                   </div>
                 )}
+                <input
+                  {...register("referralCode")}
+                  value={refCode}
+                  type="text"
+                  placeholder="Referral Code"
+                  className="w-60 h-10 rounded-md border mt-1 border-gray-300 px-2"
+                />
                 <button className="w-60 mt-1 h-10 bg-[rgb(240,240,240)] rounded-md border border-gray-300 cursor-pointer">
                   Sign Up
                 </button>
@@ -165,6 +242,9 @@ function Signup() {
           </Button>
         </div>
       </div>
+      {
+        error && <div className="text-red-600 text-center">{error.message}</div>
+      }
     </div>
   );
 }

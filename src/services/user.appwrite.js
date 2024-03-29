@@ -59,6 +59,16 @@ export class userService {
       throw error;
     }
   }
+  async deleteAccount(id) {
+    try {
+      return await this.account.deleteIdentity(id)
+    } catch (error) {
+      console.log("Error while deleting account", error.message);
+      throw error;
+    }
+  }
+  
+  
 }
 
 const userAccountService = new userService();

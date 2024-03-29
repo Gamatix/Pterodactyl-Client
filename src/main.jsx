@@ -11,7 +11,7 @@ import Panel from "./pages/Panel.jsx";
 import Referrals from "./pages/Referrals.jsx";
 import Shops from "./pages/Shops.jsx";
 import Home from "./pages/Home.jsx";
-import Support from "./pages/Support.jsx";
+import Contact from "./pages/Contact.jsx";
 import Settings from "./pages/Settings.jsx";
 import CreateServer from "./pages/CreateServer.jsx";
 import Login from "./pages/Login.jsx";
@@ -83,8 +83,8 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "support",
-        element: <Support />,
+        path: "contact",
+        element: <Contact />,
       },
       {
         path: "settings",
@@ -105,7 +105,8 @@ const router = createBrowserRouter([
             <EditServer />
           </Protected>
         ),
-      }
+      },
+      
     ],
   },
   {
@@ -124,6 +125,14 @@ const router = createBrowserRouter([
       </Protected>
     ),
   },
+  {
+    path: `/signup/join/:referralCode`,
+    element: (
+      <Protected>
+        <Signup />
+      </Protected>
+    ),
+  }
   
 ]);
 

@@ -10,8 +10,8 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { Button } from "@mui/material";
 import authServices from "../services/user.appwrite";
 import { useDispatch } from "react-redux";
-import { logout as authlogout } from "../store/userSlice";
-import Cookies from "js-cookie";
+import { logout as authlogout, removeUserId } from "../store/userSlice";
+
 const linkClass =
   "flex cursor-pointer items-center gap-2 font-light px-3 py-2 hover:bg-neutral-800 hover:text-white hover:no-underline transition-colors duration-300 ease-in-out active:bg-neutral-700 active:text-white rounded-sm text-base";
 
@@ -22,6 +22,7 @@ function Sidebar({ className = "" }) {
     try {
       await authServices.logout();
       dispatch(authlogout());
+      dispatch(removeUserId());
 
       localStorage.removeItem("email");
       localStorage.removeItem("password");

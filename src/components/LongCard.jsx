@@ -5,7 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import deleteAPI from "../pterodactyl/functions/deleteAPI";
-
+import ConfirmModal from "./ConfirmModal";
 function LongCard({
   img,
   name,
@@ -26,16 +26,7 @@ function LongCard({
   onEdit,
 }) {
   const navigate  = useNavigate()
-  // async function handleDeleteServer(event){
-  //   event.stopPropagation(); // Prevent triggering onClick of the parent div
-  //   console.log("Delete server with id: ", id)
-  //   const [deleteResponse, deleteError]  = await deleteAPI.delete(`https://panel.how2mc.xyz/api/application/servers/${id}`)
-  //   if(deleteError){
-  //     console.error("Error deleting server: ", deleteError)
-  //   }
-  //   console.log("Server deleted: ", deleteResponse)
-  //   onDelete()
-  // }
+
   return (
     <div onClick={onClick} className="cursor-pointer w-[345px] hover:shadow-sm  hover:shadow-gray-600">
       <Card className="shadow-gray-300" sx={{ maxWidth: 345 }}>

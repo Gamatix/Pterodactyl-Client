@@ -1,19 +1,20 @@
-
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import authService from "../services/user.appwrite";
-import { login as authlogin } from "../store/userSlice";
+import { login as authlogin, logout as authLogout, setUserId } from "../store/userSlice";
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import {Bars, RotatingTriangles} from 'react-loader-spinner'
-export default function Protected({ children }) {
+import getUserByEmail from "../pterodactyl/functions/getUserByEmail";
+
+export default function Protected({ children , authentication = true}) {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const [loaded, setLoaded] = useState(false);
- 
-
   const authStatus = useSelector((state) => state.user.status);
+
   async function checkAuth() {
     const email = localStorage?.email;
     console.log("Email login: ", email);
@@ -29,35 +30,37 @@ export default function Protected({ children }) {
         const user = await authService.getUser();
         console.log("User: ", user);
         if (session) {
+          const loggedInUser = await getUserByEmail(email);
+          console.log("Ptero User: ", loggedInUser[0]);
+          console.log("Ptero user id: ", loggedInUser[0].attributes.id);
+          const id = loggedInUser[0].attributes.id;
+          if(!id || !user) {
+            console.log("User not found in ptero")
+            localStorage.removeItem("email");
+            localStorage.removeItem("password");
+            dispatch(setUserId(null));
+            dispatch(authLogout());
+            navigate("/login");
+          }
+          dispatch(setUserId(id))
           dispatch(authlogin(user));
           console.log('Status: ', authStatus)
           localStorage.setItem("password", password);
           localStorage.setItem("email", email);
-          navigate("/");
+          const redirectPath = location.state?.from || '/';
+          navigate(redirectPath);
         }
       } catch (error) {
         console.error("Error during authentication", error);
       }
     }
-    
-    
-    // Moved the logic from the second useEffect here
-    
   }
-  useEffect(() => {
-    
 
+  useEffect(() => {
     (async () => {
       await checkAuth();
+      setLoaded(true);
     })()
-    if (!authStatus) {
-      console.log(authStatus)
-      console.log("authStatus is false");
-      localStorage.removeItem("email");
-      localStorage.removeItem("password");
-      navigate("/login");
-    }
-    setLoaded(true);
   }, []);
 
   return !loaded ? <div className="flex flex-row h-screen justify-center items-center"><RotatingTriangles
