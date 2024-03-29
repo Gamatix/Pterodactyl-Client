@@ -111,6 +111,7 @@ function Referrals() {
    
       
   }, [userEmails ]);
+  const  [isCopied, setIsCopied] = React.useState(false)
   return (
     loading ? <div className="flex flex-row justify-center h-screen items-center" ><InfinitySpin/></div> : 
     referalInfo && referalInfo.length === 0 ? <div>Loading...</div> :
@@ -132,7 +133,19 @@ function Referrals() {
               <Link>https://ptero.how2mc.xyz/join/{referalInfo.referralCode}</Link>
             </p>
 
-            <FaCopy className="cursor-pointer translate-y-1 pl-1 text-neutral-800 text-[20px]" />
+            <FaCopy className={` text-${isCopied ? 'green' :'neutral-800' } cursor-pointer translate-y-1 pl-1 text-neutral-800 text-[20px]`}
+            onClick={async() => {
+              await navigator.clipboard.writeText(`https://ptero.how2mc.xyz/join/${referalInfo.referralCode}`)
+              setIsCopied(true);
+              setTimeout(() => {
+                setIsCopied(false)
+              }, 3000)
+            }}
+           
+            />
+            {
+              isCopied && <div className="text-blue-600 ml-3 translate-y-1">Copied!</div>
+            }
           </div>
           <div className="mt-1.5 ">
             <p className="text-neutral-900">
@@ -148,9 +161,9 @@ function Referrals() {
                   <div className="m-4">
                   {
                     userEmails 
-                      ? userEmails.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((user) => {
+                      ? userEmails.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((user, index) => {
                           /*return <RefreadlTransparentCard username={user.name} email={user.email} />*/
-                          return <div className="mt-2 w-[140px]">  <img 
+                          return <div key={index} className="mt-2 w-[140px]">  <img 
                           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLl6vunE9mphDIu0Ky-W6K6_NeqEIt0i932Q&usqp=CAU"
                         /></div>
                         })

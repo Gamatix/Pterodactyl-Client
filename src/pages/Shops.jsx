@@ -9,6 +9,9 @@ import classNames from "classnames";
 import axios from "axios";
 import { set } from "react-hook-form";
 import { FaBullseye } from "react-icons/fa6";
+import userdata from "../services/userData.appwrite";
+import { useSelector } from "react-redux";
+import orderDetails from "../services/order.appwrite";
 function Card({ text, children, coins, resource, param }) {
   return (
     <div>
@@ -33,9 +36,9 @@ function Card({ text, children, coins, resource, param }) {
 
 function SaleCard({
   img = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-Ztwi9-pKGPKh8edWZYNuu2vtiDlO2d2hQA&usqp=CAU",
-  coinAmout = "40000",
+  coinAmout ,
   economy = "Coins",
-  price = 200,
+  price ,
   oneTime = false,
   pid,
   id,
@@ -94,10 +97,10 @@ function SaleCard({
         console.log(validateResponse)
         if(validateResponse.status === 200){
           
-          onSuccess()
+          onSuccess(coinAmout, pid, price)
         }
         else{
-          onError()
+          onError(coinAmout, pid, price)
         }
 
 
@@ -123,7 +126,7 @@ function SaleCard({
           // alert(response.error.reason);
           // alert(response.error.metadata.order_id);
           // alert(response.error.metadata.payment_id);
-          onError()
+          onError(coinAmout, pid, price)
   });
   rzp1.open();
     e.preventDefault();
@@ -176,12 +179,38 @@ function Shops() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const userState = useSelector(state => state.user.userData)
   const [open, setopen] = useState(false);
 
-  async function onSuccess(){
-    setopen(true)
-    setSuccess(true)
+  async function onSuccess(coinAmount, pid, price){
+    try {
+      setopen(true)
+      const user = await userdata.getUserData(userState.$id)
+      const updatedCoins = parseInt(user.coins) + parseInt(coinAmount)
+      await userdata.updateDocument(userState.$id, {
+        coins: String(updatedCoins)
+      })
+      setCoins(updatedCoins)
+  
+     const orderResponse =  await orderDetails.createOrder({
+        orderId: `order-${userState.$id}-${Date.now()}-${coinAmount}`,
+        productId: pid,
+        buyerId: userState.$id,
+        amount: coinAmount,
+        total: price,
+        success: true
+      })
+      setSuccess(true)
+      if (orderResponse) {
+        console.log('Order Created Successfully')
+      }
+      else{
+        console.log('Order Creation Failed')
+      }
+    } catch (error) {
+      console.log(error)
+      setError(error)
+    }
   }
 
   async function getAllProducts() {
@@ -191,20 +220,61 @@ function Shops() {
     setProducts(products.documents);
   }
   const [perror, setPerror] = useState(false);
-  function onError(){
+  async function  onError(coinAmount, pid, price){
       
       setPerror(true)
+      try {
+        
+  
+     const orderResponse =  await orderDetails.createOrder({
+        orderId: `order-${userState.$id}-${Date.now()}-${coinAmount}`,
+        productId: pid,
+        buyerId: userState.$id,
+        amount: coinAmount,
+        total: price,
+        success: false
+      })
+      setSuccess(true)
+      if (orderResponse) {
+        console.log('Order is declined')
+      }
+      else{
+        console.log('Order Creation Failed')
+      }
+      } catch (error) {
+        console.error(error)
+      }
+  }
+  const [coins, setCoins] = useState(0)
+  async function getUser(){
+    console.log('User State: ', userState)
+   
+    const user = await userdata.getUserData(userState.$id)
+    console.log('Coins: ' , user.coins)
+    setCoins(user.coins)
   }
   useEffect(() => {
     getAllProducts();
-
+    getUser()
     setLoading(false);
   }, []);
 
   return (
     <div className="flex flex-col ml-2 mr-2 bg-[rgb(240,240,240)] flex-1 rounded-lg mb-2 pb-6 ">
-      <div>
-        <p className="font-bold text-3xl ml-2 mt-2">Shops</p>
+      <div className="flex flex-row justify-between mr-2 mt-2 rounded-lg">
+      
+      <p className="font-bold text-3xl ml-2 mt-2 translate-y-8">Shops</p>
+      <div className="w-[400px] h-[130px] bg-neutral-500 flex flex-col rounded-lg justify-center"> 
+        <div className="text-white ml-4 text-2xl">
+          Total Coins
+        </div>
+        <div className="text-white mt-1.5 ml-4 text-xl">
+          {
+            coins && coins 
+          }&nbsp;🤑
+        </div>
+        
+      </div>
       </div>
       <div>
         <p className="text-neutral-700 ml-2 mt-2 font-bold text-xl">
@@ -290,25 +360,7 @@ function Shops() {
             
           </div>
         </div>
-        <div className="flex mt-6 flex-row justify-center items-center">
-          <div>
-            {" "}
-            <p className="mr-4 font-bold text-neutral-800 text-[30px] hover:random">
-              Exclusive
-            </p>
-          </div>
-
-          <div className="bg-slate-700 w-full flex-1 h-[2px] mr-8 hover:bg-red-700"></div>
-        </div>
-        <div className="flex flex-row gap-4">
-          <SaleCard price={1500} />
-          <SaleCard
-            img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-Ztwi9-pKGPKh8edWZYNuu2vtiDlO2d2hQA&usqp=CAU"
-            coinAmout="20000"
-            economy="Coins"
-            price={1250}
-          />
-        </div>
+        
         <div className="flex flex-row gap-4"></div>
       </div>
       {

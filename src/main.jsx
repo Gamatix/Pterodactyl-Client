@@ -126,7 +126,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: `/signup/join/:referralCode`,
+    path: `/join/:referralCode`,
     element: (
       <Protected>
         <Signup />

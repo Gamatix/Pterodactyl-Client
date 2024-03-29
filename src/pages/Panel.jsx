@@ -2,7 +2,7 @@ import { Button } from "@mui/material";
 import React from "react";
 import { WiDirectionUpRight } from "react-icons/wi";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, json } from "react-router-dom";
 import patchAPI from "../pterodactyl/functions/patchAPI";
 import apiCall from "../pterodactyl/functions/getAPI";
 import { FaCopy } from "react-icons/fa";
@@ -36,14 +36,16 @@ function Panel() {
     console.log("Password: ", password);
     const [response, error] = await patchAPI.patch(
       `https://panel.how2mc.xyz/api/application/users/${userId}`,
-      {
-        email: user.email,
-        username: user.username,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        language: "en",
-        password: `${password}`,
-      }
+      
+        {
+          email: user.email,
+          username: user.username,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          language: user.language,
+          password: `${password}`,
+        }
+      
     );
     if (error) {
       console.error("Error while resetting password", error);

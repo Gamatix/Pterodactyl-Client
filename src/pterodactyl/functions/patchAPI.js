@@ -8,7 +8,7 @@ class API {
     }
     let response = undefined;
     let error = undefined;
-    console.log("Running getAPI");
+    console.log("Running patch API call");
     try {
       console.log(url);
       console.log(bodyData)
