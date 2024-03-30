@@ -48,6 +48,7 @@ export class userData{
 
     async  updateDocument(userId, data){
         try{
+            console.log("Updating user data", userId, data);
             return await this.database.updateDocument(
                 String(import.meta.env.VITE_APPWRITE_DATABASE_ID),
                 String(import.meta.env.VITE_APPWRITE_COLLECTION_USER_ID),

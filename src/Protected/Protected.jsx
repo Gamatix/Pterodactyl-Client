@@ -18,7 +18,8 @@ export default function Protected({ children , authentication = true}) {
   async function checkAuth() {
     const email = localStorage?.email;
     console.log("Email login: ", email);
-    if (localStorage.password && localStorage.email) {
+    
+    if (localStorage.password && localStorage.email && authService) {
       const password = localStorage.password;
       console.log("Password login: ", password);
       try {
@@ -47,12 +48,26 @@ export default function Protected({ children , authentication = true}) {
           console.log('Status: ', authStatus)
           localStorage.setItem("password", password);
           localStorage.setItem("email", email);
-          const redirectPath = location.state?.from || '/';
+          console.log("Location State: ", location.state);
+          const redirectPath = location.pathname || '/';
           navigate(redirectPath);
         }
       } catch (error) {
         console.error("Error during authentication", error);
       }
+    }
+    else{
+      console.log("No email or password found")
+      localStorage.removeItem("email");
+      localStorage.removeItem("password");
+      dispatch(setUserId(null));
+      dispatch(authLogout());
+      const currentPath = location.pathname;
+      console.log("Current Path: ", currentPath);
+      const joinPattern = /^\/join\/.+/;
+  const isJoinPath = joinPattern.test(currentPath);
+      const redirectPath = (currentPath === "/login" || currentPath === "/signup" || isJoinPath) ? currentPath : "/login";
+      navigate(redirectPath);
     }
   }
 

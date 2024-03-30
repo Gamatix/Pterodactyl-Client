@@ -7,9 +7,35 @@ import getUsersServer from '../pterodactyl/functions/getUsersServer'
 import TextField from '@mui/material/TextField'
 import { Button } from '@mui/material'
 import patchAPI from '../pterodactyl/functions/patchAPI'
+import userdata from '../services/userData.appwrite'
  function EditServer() {
+    const user = useSelector((state) => state.user.userData);
+    //limits of the user
+    const [limits, setLimits] = useState({
+      serverAmount: 3,
+      cpu: 120,
+      memory: 6144,
+      disk: 14336,
+      backup: 3,
+      allocation: 3,
+      database: 3,
+    });
+  
+    const getServerLimits = async () => {
+      try {
+        console.log("User limit of user id: ", user.$id);
+        const limitResponse = await userdata.getUserData(user.$id);
+        const limit = await JSON.parse(limitResponse.limits);
+        console.log("USer limits: ", limit);
+        setLimits(limit);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+
     const {id} = useParams()
-    const user = useSelector(state => state.user.userData)
+   
 
     const [server, setServer]  = useState(null)
     const [error, setError] = useState(null)
@@ -28,7 +54,8 @@ import patchAPI from '../pterodactyl/functions/patchAPI'
     const [databases, setDatabases] = useState(0)
     const [allocations, setAllocations] = useState(0)
     const [backups, setBackups] = useState(0)
-
+    
+    const userId = useSelector((state) => state.user.userId)
     async function getServer(){
         setError(null)
         const [serverInfo, serverError] = await apiCall.get(`${import.meta.env.VITE_PTERODACTYL_URL}/servers/${id}`)
@@ -41,6 +68,9 @@ import patchAPI from '../pterodactyl/functions/patchAPI'
             setError(new Error("Server not found"))
         }
         console.log("Server: ", serverInfo.data.attributes)
+        if(serverInfo.data.attributes.user !== userId ){
+            navigate('/')
+        }
         setServer(serverInfo.data.attributes)
         setLoading(false)
     }
@@ -135,6 +165,11 @@ import patchAPI from '../pterodactyl/functions/patchAPI'
         
     }, [])
     
+    useEffect(() => {
+        getServerLimits()
+        
+    }, [])
+
     useEffect(() =>{
         if (usersServer) { // Check if usersServer is not null
             console.log("Users Server: ", usersServer)
@@ -143,11 +178,17 @@ import patchAPI from '../pterodactyl/functions/patchAPI'
                 await getUsersCurrentResources()
             })()
             ;(async () => {
+                
                 await getRemainingResources()
             })()
 
         }
-    }, [usersServer])
+    }, [usersServer, limits])
+
+    useEffect(() => {
+        getRemainingResources()
+    }, [limits])
+
     // useEffect(() => {
     //     ;(async () => {
     //         await getRemainingResources()
@@ -183,12 +224,12 @@ import patchAPI from '../pterodactyl/functions/patchAPI'
     const [remainingBackups, setRemainingBackups] = useState(0)
     
     async function getRemainingResources(){
-        const remainingCPU = 120 - (server.limits.cpu + totalCPU)
-        const remainingMemory = 6144 - (server.limits.memory + totalMemory)
-        const remainingDisk = 14336 - (server.limits.disk + totalDisk)
-        const remainingDatabases = 3 - (server.feature_limits.databases + totalDatabases)
-        const remainingAllocations =    3 - (server.feature_limits.allocations + totalAllocations)
-        const remainingBackups = 3 - (server.feature_limits.backups + totalBackups)
+        const remainingCPU = limits.cpu - (server.limits.cpu + totalCPU)
+        const remainingMemory = limits.memory - (server.limits.memory + totalMemory)
+        const remainingDisk = limits.disk - (server.limits.disk + totalDisk)
+        const remainingDatabases = limits.database - (server.feature_limits.databases + totalDatabases)
+        const remainingAllocations =   limits.allocation - (server.feature_limits.allocations + totalAllocations)
+        const remainingBackups = limits.backup - (server.feature_limits.backups + totalBackups)
 
         setRemainingCPU(remainingCPU)
         setRemainingMemory(remainingMemory)
@@ -222,7 +263,7 @@ import patchAPI from '../pterodactyl/functions/patchAPI'
                 backups: currentBackups
             }
         }
-        if((totalCPU + currentCPU) > 120 || (totalMemory + currentMemory) > 6144 || (totalDisk + currentDisk) > 14336 || (totalDatabases + currentDatabases) > 3 || (totalAllocations + currentAllocations) > 3 || (totalBackups + currentBackups) > 3 ){
+        if((totalCPU + currentCPU) > limits.cpu || (totalMemory + currentMemory) > limits.memory || (totalDisk + currentDisk) > limits.disk || (totalDatabases + currentDatabases) > limits.database || (totalAllocations + currentAllocations) > limits.allocation || (totalBackups + currentBackups) > limits.backup ){
             console.error("User has exceeded the resource limits")
             setUpdateError('User has exceeded the resource limits')
             return

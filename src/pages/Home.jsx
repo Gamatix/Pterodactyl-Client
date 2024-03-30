@@ -6,18 +6,44 @@ import { GoCpu } from "react-icons/go";
 import { FaFloppyDisk } from "react-icons/fa6";
 import { AiOutlineReload } from "react-icons/ai";
 import LongCard from "../components/LongCard";
-import {Bars} from 'react-loader-spinner'
+import { Bars } from "react-loader-spinner";
 import getUsersServer from "../pterodactyl/functions/getUsersServer.js";
 import { useSelector } from "react-redux";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import deleteAPI from "../pterodactyl/functions/deleteAPI.js";
-import {InfinitySpin} from 'react-loader-spinner'
+import { InfinitySpin } from "react-loader-spinner";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Button, Modal, Typography, Box } from "@mui/material";
 import ConfirmModal from "../components/ConfirmModal.jsx";
 import { set } from "react-hook-form";
+import userdata from "../services/userData.appwrite.js";
 function Home() {
+  const userId = useSelector((state) => state.user.userId);
+  const user = useSelector((state) => state.user.userData);
+  //limits of the user
+  const [limits, setLimits] = useState({
+    serverAmount: 3,
+    cpu: 120,
+    memory: 6144,
+    disk: 14336,
+    backup: 3,
+    allocation: 3,
+    database: 3,
+  });
+
+  const getServerLimits = async () => {
+    try {
+      console.log("User limit of user id: ", user.$id);
+      const limitResponse = await userdata.getUserData(user.$id);
+      const limit = await JSON.parse(limitResponse.limits);
+      console.log("USer limits: ", limit);
+      setLimits(limit);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const [currentServerId, setCurrentServerId] = useState(null);
 
   const [open, setOpen] = useState(false);
@@ -25,13 +51,13 @@ function Home() {
   const handleOpen = () => setOpen(true);
   const [confirm, setConfirm] = useState(false);
   const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
     width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
+    bgcolor: "background.paper",
+    border: "2px solid #000",
     boxShadow: 24,
     p: 4,
   };
@@ -40,7 +66,7 @@ function Home() {
   const [showModal, setShowModal] = useState(false);
   const [res, setRes] = useState([]);
   const email = useSelector((state) => state.user.userData?.email);
-  const userId = useSelector((state) => state.user.userId);
+
   useEffect(() => {
     (async () => {
       console.log("loading", isLoading);
@@ -49,6 +75,7 @@ function Home() {
       console.log("This res1: ", response);
       setRes(response);
       console.log("The user id: ", userId);
+      getServerLimits();
       setIsLoading(false);
       console.log("loading", isLoading);
     })();
@@ -80,68 +107,79 @@ function Home() {
   }
   const [key, setKey] = useState(Math.random());
   useEffect(() => {
-    console.log("Server rerendered," , key);
+    console.log("Server rerendered,", key);
   }, [key]);
 
-  async function handleServerOpen(id){
+  async function handleServerOpen(id) {
     const serverId = id;
-    const openedServer = res[0].find(server => server.attributes.id === serverId);
-    console.log("Opened server: ", openedServer.attributes.identifier)
-    window.open(`https://panel.how2mc.xyz/server/${openedServer.attributes.identifier}`, "_blank")
+    const openedServer = res[0].find(
+      (server) => server.attributes.id === serverId
+    );
+    console.log("Opened server: ", openedServer.attributes.identifier);
+    window.open(
+      `https://panel.how2mc.xyz/server/${openedServer.attributes.identifier}`,
+      "_blank"
+    );
   }
-  async function serverDelete(){
-    setOpen(false)
+  async function serverDelete() {
+    setOpen(false);
     const id = currentServerId;
-    console.log("Delete server with id: ", id)
-    
-    const [deleteResponse, deleteError]  = await deleteAPI.delete(`${import.meta.env.VITE_PTERODACTYL_URL}/servers/${id}`)
-    if(deleteError){
-      console.error("Error deleting server: ", deleteError)
+    console.log("Delete server with id: ", id);
+
+    const [deleteResponse, deleteError] = await deleteAPI.delete(
+      `${import.meta.env.VITE_PTERODACTYL_URL}/servers/${id}`
+    );
+    if (deleteError) {
+      console.error("Error deleting server: ", deleteError);
     }
-    console.log("Server deleted: ", deleteResponse)
-    setKey( Math.random());
-     console.log("Server rerendered," , key);
-     const response = await getUsersServer(email);
-      console.log("This res1: ", response);
-      setRes(response);
-      setCurrentServerId(null)
+    console.log("Server deleted: ", deleteResponse);
+    setKey(Math.random());
+    console.log("Server rerendered,", key);
+    const response = await getUsersServer(email);
+    console.log("This res1: ", response);
+    setRes(response);
+    setCurrentServerId(null);
   }
-  async function handleDeleteServer(id){
-    setCurrentServerId(id)
-    console.log("Delete server with id: ", id)
-    handleOpen()
-    
-     
+  async function handleDeleteServer(id) {
+    setCurrentServerId(id);
+    console.log("Delete server with id: ", id);
+    handleOpen();
   }
-  const [loadingServer, setLoadingServer] = useState(false)
-  async function reloadServer(){
-    setLoadingServer(true)
-    console.log("Reloading servers")
-    
+  const [loadingServer, setLoadingServer] = useState(false);
+  async function reloadServer() {
+    setLoadingServer(true);
+    console.log("Reloading servers");
+
     const [response, error] = await getUsersServer(email);
-    setLoadingServer(false)
+    setLoadingServer(false);
   }
-  const navigate = useNavigate()
-  async function handleEditServer(id){
-    console.log("Edit server with id: ", id)
-    const serverInfo = res[0].find(server => server.attributes.id === id);
-    console.log("Server info: ", serverInfo)
+  const navigate = useNavigate();
+  async function handleEditServer(id) {
+    console.log("Edit server with id: ", id);
+    const serverInfo = res[0].find((server) => server.attributes.id === id);
+    console.log("Server info: ", serverInfo);
 
-    navigate(`/edit-server/${id}`)
+    navigate(`/edit-server/${id}`);
   }
 
-  return (
-    isLoading ? (<div className="flex flex-row justify-center items-center h-screen"><Bars
-     className=""
-      height="80"
-      width="80"
-      color="#4fa94d"
-      ariaLabel="bars-loading"
-      wrapperStyle={{}}
-      wrapperClass=""
-      visible={true}
-      /></div> ): (
-    <div key={key} className="flex flex-col overflow-y-auto bg-neutral-100 rounded-sm pb-4 ">
+  return isLoading ? (
+    <div className="flex flex-row justify-center items-center h-screen">
+      <Bars
+        className=""
+        height="80"
+        width="80"
+        color="#4fa94d"
+        ariaLabel="bars-loading"
+        wrapperStyle={{}}
+        wrapperClass=""
+        visible={true}
+      />
+    </div>
+  ) : (
+    <div
+      key={key}
+      className="flex flex-col overflow-y-auto bg-neutral-100 rounded-sm pb-4 "
+    >
       <div className="px-2 py-2 ">
         {(
           <img
@@ -162,27 +200,27 @@ function Home() {
           <Card
             label="Servers"
             current={res[0] ? res[0].length : 0}
-            max="3"
+            max={limits.serverAmount}
             children={<CiCloud fontSize="30px" />}
           />
           <Card
             label="Memory"
             current={totalMemory}
-            max="6144"
+            max={limits.memory}
             children={<FaMemory fontSize="30px" />}
             text={"MB"}
           />
           <Card
             label="CPU"
             current={totalCPU}
-            max="120"
+            max={limits.cpu}
             children={<GoCpu fontSize="30px" />}
             text={"%"}
           />
           <Card
             label="Disk"
             current={totalDisk}
-            max="14336"
+            max={limits.disk}
             children={<FaFloppyDisk fontSize="30px" />}
             text={"MB"}
           />
@@ -191,23 +229,26 @@ function Home() {
 
       <div className="flex flex-row gap-2 items-center font-bold text-xl ml-2 mt-0  ">
         Your Servers
-        <AiOutlineReload onClick={reloadServer} className="translate-y-0.5 cursor-pointer" />
+        <AiOutlineReload
+          onClick={reloadServer}
+          className="translate-y-0.5 cursor-pointer"
+        />
       </div>
       <div className="ml-2 mt-1 shadow-neutral-200 broder-b border-neutral-200 flex flex-row gap-2">
         {loadingServer ? (
           <div className="flex flex-col  justify-center items-center  w-[345px]">
-          <InfinitySpin
-          visible={true}
-          width="200"
-          color="#4fa94d"
-          ariaLabel="infinity-spin-loading"
-          />
-          <div className="font-bold text-xl">Reloading servers...</div>
+            <InfinitySpin
+              visible={true}
+              width="200"
+              color="#4fa94d"
+              ariaLabel="infinity-spin-loading"
+            />
+            <div className="font-bold text-xl">Reloading servers...</div>
           </div>
         ) : res[0] && res[0].length >= 1 ? (
           res[0].map((server) => (
             <LongCard
-              onEdit = {handleEditServer}
+              onEdit={handleEditServer}
               className="shadow-sm sgadow-neutral-200"
               img="https://i0.wp.com/news.onepercentclub.io/wp-content/uploads/2024/03/lars-kienle-IlxX7xnbRF8-unsplash.jpg?resize=1024%2C575&ssl=1"
               name={server.attributes.name}
@@ -230,39 +271,53 @@ function Home() {
           ))
         ) : (
           <div className="w-full  ml-auto mr-auto mt-4 flex flex-col items-center">
-            <img src="https://dash.slicehosting.tech/images/empty.svg" className="w-52"/>
-            <h1 className="text-black text-lg">You don't have any servers yet.</h1>
+            <img
+              src="https://dash.slicehosting.tech/images/empty.svg"
+              className="w-52"
+            />
+            <h1 className="text-black text-lg">
+              You don't have any servers yet.
+            </h1>
             <Link to="/create-server">
-            <div className="mt-4  ">
-            <Button className="decoration bg-gradient-to-r from-blue-500 to-blue-700 text-white px-5 py-2 rounded-md mt-5 hover:scale-105 transition shadow-md" variant="contained" color="primary"> 
-            Create a server
-          </Button>
-            </div>
+              <div className="mt-4  ">
+                <Button
+                  className="decoration bg-gradient-to-r from-blue-500 to-blue-700 text-white px-5 py-2 rounded-md mt-5 hover:scale-105 transition shadow-md"
+                  variant="contained"
+                  color="primary"
+                >
+                  Create a server
+                </Button>
+              </div>
             </Link>
           </div>
         )}
       </div>
       <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Are you sure you want to delete the server?
-        </Typography>
-       
-       <div className="flex flex-row gap-4 mt-2">
-       <Button variant="contained" color="error" onClick={ () => serverDelete() }>Yes</Button>
-       <Button variant="contained" color="secondary" onClick={handleClose}>No</Button>
-        </div>
-      </Box>
-    </Modal>
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Are you sure you want to delete the server?
+          </Typography>
+
+          <div className="flex flex-row gap-4 mt-2">
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => serverDelete()}
+            >
+              Yes
+            </Button>
+            <Button variant="contained" color="secondary" onClick={handleClose}>
+              No
+            </Button>
+          </div>
+        </Box>
+      </Modal>
     </div>
-  
-  )
-        
-  )
+  );
 }
 export default Home;

@@ -12,9 +12,15 @@ import { FaBullseye } from "react-icons/fa6";
 import userdata from "../services/userData.appwrite";
 import { useSelector } from "react-redux";
 import orderDetails from "../services/order.appwrite";
-function Card({ text, children, coins, resource, param }) {
+function Card({ text, children, coins, resource, param , onCardClick , type , setType, setAmount}) {
+  
+
   return (
-    <div>
+    <div onClick={ () =>{
+      setType(type)
+      setAmount(coins)
+      onCardClick( coins)
+    }}>
       <div className=" mt-2 flex flex-row bg-indigo-300 w-[350px] h-[85px] rounded-lg cursor-pointer hover:shadow-md hover:shadow-gray-600">
         <div className="mt-auto mb-auto ml-4 ">{children}</div>
         <div className="flex flex-col mr-auto mt-auto mb-auto ml-4">
@@ -175,6 +181,94 @@ function SaleCard({
 }
 
 function Shops() {
+
+  const [limitUpgrade, setLimitUpgrade] = useState(false)
+
+  const onBuy = async (type , amount) => {
+    
+    const user = await userdata.getUserData(userState.$id)
+
+    console.log('User Data: ', user)
+    
+    const limits = JSON.parse(user.limits)
+    let newLimits = undefined;
+    if(type === 'cpu'){
+       newLimits = {...limits , cpu: limits.cpu + 100}
+    console.log('11111 222 Limits: ', newLimits)
+  
+   
+    }
+    else if (type === 'ram'){
+       newLimits = {...limits , memory: limits.memory + 1024}
+    console.log('11111 222 Limits: ', newLimits)
+    
+
+    }
+    else if (type === 'disk'){
+       newLimits = {...limits , disk: limits.disk + 1024}
+    console.log('11111 222 Limits: ', newLimits)
+
+    }
+    else if (type === 'port'){
+        newLimits = {...limits , allocation: limits.allocation + 1}
+    console.log('11111 222 Limits: ', newLimits)
+    
+    }
+    else if (type === 'server'){
+        newLimits = {...limits , serverAmount: limits.serverAmount + 1}
+    console.log('11111 222 Limits: ', newLimits)
+    
+    }
+    else if (type === 'backup'){
+        newLimits = {...limits , backup: limits.backup + 1}
+    console.log('11111 222 Limits: ', newLimits)
+
+    }
+    else if (type === 'database'){
+        newLimits = {...limits , database: limits.database + 1}
+    console.log('11111 222 Limits: ', newLimits)
+    }
+
+
+
+    const updateLimitResponse = await userdata.updateDocument(userState.$id, {
+      username: user.username,
+      email: user.email,
+      referral_code : user.referral_code,
+      userId : user.userId,
+      rank : user.rank,
+      refererUserId : user.refererUserId,
+      avatar : user.avatar,
+      limits: JSON.stringify(newLimits),
+      coins: String(parseInt(user.coins) - parseInt(amount))
+    })
+    if(updateLimitResponse){
+      console.log('Limits Updated Successfully')
+    }
+    else{
+      console.log('Limits Update Failed')
+    }
+    setLimitUpgrade(false)
+    setIncreaseLimitDialoge(false)
+    setAmount(0)
+    setType('')
+    setCoins(parseInt(user.coins) - parseInt(amount))
+  }
+
+  const [increaseLimitDialoge, setIncreaseLimitDialoge] = useState(false)
+  const onCardClick = () => {
+    setIncreaseLimitDialoge(true)
+    
+
+    
+  }
+  const [type, setType] = useState('')
+  const [amount, setAmount] = useState(0)
+  useEffect(() => {
+    if (limitUpgrade && type && amount){
+      onBuy(type , amount)
+    }
+  }, [limitUpgrade , type , amount]);
   const [products, setProducts] = useState([]);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -248,11 +342,37 @@ function Shops() {
   const [coins, setCoins] = useState(0)
   async function getUser(){
     console.log('User State: ', userState)
-   
+    
     const user = await userdata.getUserData(userState.$id)
+    
+    console.log('User Data: ', user)
     console.log('Coins: ' , user.coins)
     setCoins(user.coins)
   }
+
+  // This function updates the server limits
+const updateServerLimits = async (newLimits) => {
+  try {
+    const user = await userdata.getUserData(userState.$id)
+    console.log('User Data: ', user)
+    const userData = await userdata.getUserData(userState.$id)
+    // Call your API to update the server limits
+    await userdata.updateDocument(userState.$id,
+      {
+        ...userData,
+        limits: JSON.stringify(newLimits),
+      
+      } )
+
+    
+    // Update the local state
+    setLimits(newLimits);
+  } catch (error) {
+    console.error('Error updating server limits:', error);
+  }
+};
+
+
   useEffect(() => {
     getAllProducts();
     getUser()
@@ -288,24 +408,41 @@ function Shops() {
             coins="100"
             resource="100%"
             children={<GoCpu fontSize={"40px"} />}
+            onCardClick={onCardClick}
+            type="cpu"
+            setType={setType}
+            setAmount={setAmount}
+            
           />
           <Card
             text="Upgrade your RAM"
             coins="300"
             resource="1024MB"
             children={<GoCpu fontSize={"40px"} />}
+            onCardClick={onCardClick}
+            type="ram"
+            setType={setType}
+            setAmount={setAmount}
           />
           <Card
             text="Upgrade your Disk"
             coins="100"
             resource="1024MB"
             children={<GoCpu fontSize={"40px"} />}
+            onCardClick={onCardClick}
+            type="disk"
+            setType={setType}
+            setAmount={setAmount}
           />
           <Card
             text="Additional ports"
             coins="20"
             resource="1 port"
             children={<GoCpu fontSize={"40px"} />}
+            onCardClick={onCardClick}
+            type="port"
+            setType={setType}
+            setAmount={setAmount}
           />
         </div>
         <div className="flex flex-row gap-2">
@@ -314,18 +451,30 @@ function Shops() {
             coins="250"
             resource="1 server slot"
             children={<GoCpu fontSize={"40px"} />}
+            onCardClick={onCardClick}
+            type="server"
+            setType={setType}
+            setAmount={setAmount}
           />
           <Card
             text="Additional backups"
             coins="50"
             resource="1 backup slot"
             children={<GoCpu fontSize={"40px"} />}
+            onCardClick={onCardClick}
+            type="backup"
+            setType={setType}
+            setAmount={setAmount}
           />
           <Card
             text="Additional databases"
             coins="25"
             resource="1 database slot"
             children={<GoCpu fontSize={"40px"} />}
+            onCardClick={onCardClick}
+            type="database"
+            setType={setType}
+            setAmount={setAmount}
           />
         </div>
         <div className="flex flex-col mt-4">
@@ -367,7 +516,7 @@ function Shops() {
         open  ?
           <div>
             <Dialog open={open}  >
-              <div className=" rounded-lg w-[500px] h-[150px] flex flex-col items-center justify-center bg-neutral-400">
+              <div className=" rounded-lg w-[500px] h-[150px] flex flex-col items-center justify-center bg-neutral-200">
                 <div className="text-xl font-bold text-black">Payment Successful</div>
                 <div className="mt-4">
                   <Button onClick={() => 
@@ -386,7 +535,7 @@ function Shops() {
         perror  ?
           <div>
             <Dialog open={perror}  >
-              <div className=" rounded-lg w-[500px] h-[150px] flex flex-col items-center justify-center bg-neutral-400">
+              <div className=" rounded-lg w-[500px] h-[150px] flex flex-col items-center justify-center bg-neutral-200">
                 <div className="text-xl font-bold text-black">Payment Unsuccessful</div>
                 <div className="mt-4">
                   <Button onClick={() => 
@@ -399,6 +548,31 @@ function Shops() {
             </Dialog>
           </div>
         : null
+      }
+      {
+        increaseLimitDialoge ?
+        <div>
+            <Dialog open={increaseLimitDialoge}  >
+              <div className=" rounded-lg w-[500px] h-[150px] flex flex-col items-center justify-center bg-neutral-200">
+                <div className="text-xl font-bold text-black">Want to proceed ? </div>
+                <div className=" flex flex-row justify-between mt-4 gap-4 pr-4" >
+                  <Button onClick={() => 
+                    {
+                      setLimitUpgrade(true)
+                      setIncreaseLimitDialoge(false)
+                    }
+                  } variant="contained" color="success" className="bg-green-500 text-white">Proceed ?</Button>
+                  <Button onClick={() => 
+                    {
+                      setLimitUpgrade(false)
+                      setIncreaseLimitDialoge(false)
+                    }
+                  } variant="contained" color="error" className="bg-red-500 text-white ">Close</Button>
+                </div>
+              </div>
+            </Dialog>
+          </div>
+        :null
       }
     </div>
   );

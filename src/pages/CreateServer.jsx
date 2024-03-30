@@ -9,7 +9,8 @@ import {  useNavigate } from "react-router-dom";
 
 import { ThreeDots } from "react-loader-spinner";
 import  getuserserver from "../pterodactyl/functions/getUsersServer"
-
+import userdata from "../services/userData.appwrite";
+import { set } from "react-hook-form";
 function LocationCard({
   img,
   Country,
@@ -42,6 +43,30 @@ function LocationCard({
 }
 
 function CreateServer() {
+  const user = useSelector((state) => state.user.userData);
+  //limits of the user
+  const [limits, setLimits] = useState({
+    serverAmount: 3,
+    cpu: 120,
+    memory: 6144,
+    disk: 14336,
+    backup: 3,
+    allocation: 3,
+    database: 3,
+  });
+
+  const getServerLimits = async () => {
+    try {
+      console.log("User limit of user id: ", user.$id);
+      const limitResponse = await userdata.getUserData(user.$id);
+      const limit = await JSON.parse(limitResponse.limits);
+      console.log("USer limits: ", limit);
+      setLimits(limit);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 
   const [isLoading, setIsLoading] = useState(true);
   //navigate
@@ -110,11 +135,11 @@ function CreateServer() {
     console.log("Total Database: ", totalDatabase);
 
     // set value
-    setCpu(120 - totalCPU);
-    setMemory(6144- totalMemory);
-    setDiskSpace(14336- totalDisk);
-    setAdditionalPorts(3 - totalPort);
-    setBackups(3 - totalBackup);
+    setCpu(limits.cpu - totalCPU);
+    setMemory(limits.memory- totalMemory);
+    setDiskSpace(limits.disk- totalDisk);
+    setAdditionalPorts(limits.allocation - totalPort);
+    setBackups(limits.backup - totalBackup);
     setDatabases(3 - totalDatabase);
 
     setTotalMemory(totalMemory);
@@ -184,8 +209,9 @@ function CreateServer() {
 
   //server of users
   useEffect(() => {
+    
     getUsersServer();
-  }, []);
+  }, [limits]);
 
   //Location Details
   useEffect(() => {
@@ -199,12 +225,12 @@ function CreateServer() {
 
   //resource
   const [serverName, setServerName] = useState("Your Server Name");
-  const [cpu, setCpu] = useState(120);
-  const [memory, setMemory] = useState(6144);
-  const [diskSpace, setDiskSpace] = useState(14336);
-  const [additionalPorts, setAdditionalPorts] = useState(1);
-  const [backups, setBackups] = useState(1);
-  const [databases, setDatabases] = useState(1);
+  const [cpu, setCpu] = useState(limits.cpu);
+  const [memory, setMemory] = useState(limits);
+  const [diskSpace, setDiskSpace] = useState(limits);
+  const [additionalPorts, setAdditionalPorts] = useState(limits.allocation);
+  const [backups, setBackups] = useState(limits.backup);
+  const [databases, setDatabases] = useState(limits.database);
 
   // handle text change
   const handleDiskSpaceChange = (event) => {
@@ -266,9 +292,11 @@ function CreateServer() {
     // setTimeout
 
     useEffect(() => {
+      getServerLimits()
       setTimeout(()=>{
+        
         setIsLoading(false)
-      }, 1000)
+      }, 1250)
     }, [])
 
 
@@ -305,13 +333,13 @@ function CreateServer() {
     const newTotalDatabase = totalDatabase + databases;
     console.log('New total memory: ', newTotalMemory)
     //check total server
-    if(totalServer > 3){
+    if(totalServer > limits){
       alert("You have exceeded the server limit")
       return
     }
 
     // check if the user has enough resources
-    if (newTotalCPU > 120) {
+    if (newTotalCPU > limits.cpu) {
       setErrorMessage("You have exceeded the CPU limit");
       
       setCpu(cpu)
@@ -321,7 +349,7 @@ function CreateServer() {
       alert("CPU should be greater than 50")
       return;
     }
-    if (newTotalMemory > 6144) {
+    if (newTotalMemory > limits.memory) {
       setErrorMessage("You have exceeded the memory limit");
       
       setMemory(memory)
@@ -344,19 +372,19 @@ function CreateServer() {
       return
     }
 
-    if (newTotalPort > 3) {
+    if (newTotalPort > limits.allocation) {
       setErrorMessage("You have exceeded the port limit");
      
       setAdditionalPorts(totalPort)
       return;
     }
-    if (newTotalBackup > 3) {
+    if (newTotalBackup > limits.backup) {
       setErrorMessage("You have exceeded the backup limit");
      
       setBackups(totalBackup)
       return;
     }
-    if (newTotalDatabase > 3) {
+    if (newTotalDatabase > limits.database) {
       setErrorMessage("You have exceeded the database limit");
      
       setDatabases(totalDatabase)
@@ -467,6 +495,16 @@ function CreateServer() {
     console.log("Backups: ", backups);
     console.log("Databases: ", databases);
   }, [serverName, cpu, memory, diskSpace, additionalPorts, backups, databases]);
+
+  useEffect(() =>{
+    setMemory(limits.memory)
+    setCpu(limits.cpu)
+    setDiskSpace(limits.disk)
+    setAdditionalPorts(limits.allocation)
+    setBackups(limits.backup)
+    setDatabases(limits.database)
+
+  },[limits.allocation , limits.backup, limits.cpu, limits.database, limits.disk, limits.memory])
 
   
   return (
