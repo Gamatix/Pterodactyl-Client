@@ -16,7 +16,7 @@ export class fileService {
 
   async uploadFile(file) {
     try {
-      return this.bucket.createFile(
+      return await this.bucket.createFile(
         String(import.meta.env.VITE_APPWRITE_BUCKET_AVATAR_ID),
         ID.unique(),
         file
@@ -29,7 +29,7 @@ export class fileService {
 
   async deleteFile(fileId) {
     try {
-      return this.bucket.deleteFile(
+      return  await this.bucket.deleteFile(
         String(import.meta.env.VITE_APPWRITE_BUCKET_AVATAR_ID),
         fileId
       );
@@ -41,7 +41,7 @@ export class fileService {
 
   async getFilePreview(fileId) {
     try {
-      return this.bucket.getFilePreview(
+      return await this.bucket.getFilePreview(
         String(import.meta.env.VITE_APPWRITE_BUCKET_AVATAR_ID),
         fileId
       );
@@ -53,7 +53,7 @@ export class fileService {
 
   async downloadFile(fileId) {
     try {
-      return this.bucket.getFileDownload(
+      return await this.bucket.getFileDownload(
         String(import.meta.env.VITE_APPWRITE_BUCKET_AVATAR_ID),
         fileId
       );

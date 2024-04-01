@@ -158,7 +158,7 @@ function CreateServer() {
     console.log("Nodes under", locationId, " is : ", node);
     setNodesOfLocation(node);
     const lInfo = await apiCall.get(
-      `https://panel.how2mc.xyz/api/application/locations/${locationId}`
+      `/api/application/locations/${locationId}`
     );
     const locationInfo = lInfo[0].data.attributes;
     setLocationDetails(locationInfo);
@@ -168,7 +168,7 @@ function CreateServer() {
     setNodeId(node.attributes.id);
     console.log("Selected Node ID is: ", node.attributes.id);
     const nInfo = await apiCall.get(
-      `https://panel.how2mc.xyz/api/application/nodes/${node.attributes.id}`
+      `/api/application/nodes/${node.attributes.id}`
     );
     console.log("Node Info: ", nInfo[0].data.attributes);
     setNodeDetails(nInfo[0].data.attributes);
@@ -239,7 +239,7 @@ function CreateServer() {
 
   async function getLocations() {
     const [locationResponse, loactionError] = await apiCall.get(
-      "https://panel.how2mc.xyz/api/application/locations"
+      "/api/application/locations"
     );
     if (loactionError) {
       console.error("Error while getting locations", loactionError);
@@ -252,7 +252,7 @@ function CreateServer() {
 
   async function getNodes() {
     const [nodeResponse, nodeError] = await apiCall.get(
-      "https://panel.how2mc.xyz/api/application/nodes"
+      "/api/application/nodes"
     );
     if (nodeError) {
       console.error("Error while getting nodes", nodeError);
@@ -265,7 +265,7 @@ function CreateServer() {
 
   async function getNests() {
     const [nestResponse, nestError] = await apiCall.get(
-      "https://panel.how2mc.xyz/api/application/nests"
+      "/api/application/nests"
     );
     if (nestError) {
       console.error("Error while getting nests", nestError);
@@ -277,7 +277,7 @@ function CreateServer() {
 
   async function getEggs(nestId) {
     const [eggResponse, eggError] = await apiCall.get(
-      `https://panel.how2mc.xyz/api/application/nests/${nestId}/eggs`
+      `/api/application/nests/${nestId}/eggs`
     );
     if (eggError) {
       console.error("Error while getting eggs", eggError);
@@ -455,7 +455,7 @@ function CreateServer() {
 
     // send the request
     const [response, error] = await postAPI.post(
-      `${import.meta.env.VITE_PTERODACTYL_URL}/servers`,
+      `/api/application/servers`,
       body,
       import.meta.env.VITE_PTERODACTYL_API_KEY
     );

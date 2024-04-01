@@ -72,6 +72,7 @@ import userdata from '../services/userData.appwrite'
             navigate('/')
         }
         setServer(serverInfo.data.attributes)
+       
         setLoading(false)
     }
     //get users total resources
@@ -140,7 +141,9 @@ import userdata from '../services/userData.appwrite'
     }
     useEffect(() => {
         getServer()
-        
+        getServerLimits()
+
+       
         console.log("User: ", user)
         ;(async () =>{
             const [uServer, uServerError] = await getUsersServer(usersEmail)
@@ -156,8 +159,7 @@ import userdata from '../services/userData.appwrite'
             
             setUsersServer(uServer)
             console.log("Users Server: ", usersServer)
-            // await getUsersTotalResources()
-            // await getUsersCurrentResources()
+           
                
         })()
 
@@ -165,35 +167,21 @@ import userdata from '../services/userData.appwrite'
         
     }, [])
     
-    useEffect(() => {
-        getServerLimits()
-        
-    }, [])
-
-    useEffect(() =>{
-        if (usersServer) { // Check if usersServer is not null
-            console.log("Users Server: ", usersServer)
-            ;(async () => {
-                await getUsersTotalResources()
-                await getUsersCurrentResources()
-            })()
-            ;(async () => {
-                
-                await getRemainingResources()
-            })()
-
-        }
-    }, [usersServer, limits])
 
     useEffect(() => {
+      if(server ){
+        getUsersCurrentResources()
         getRemainingResources()
-    }, [limits])
+      }
+      if(server && usersServer){
+        getUsersTotalResources()
+        
+      }
+    }, [server, limits, usersServer, totalCPU, totalMemory, totalDisk, totalDatabases, totalAllocations, totalBackups])
 
-    // useEffect(() => {
-    //     ;(async () => {
-    //         await getRemainingResources()
-    //     })()
-    // }, [totalCPU, totalMemory, totalDisk, totalDatabases, totalAllocations, totalBackups])
+
+
+  
 
     useEffect(() => {
         console.log('CPU: ', cpu)

@@ -1,7 +1,7 @@
 import apiCall from "./getAPI";
 async function getUserByEmail(email){
     console.log('req email: ', email)
-    const [userResponse, userError] = await apiCall.get("https://panel.how2mc.xyz/api/application/users");
+    const [userResponse, userError] = await apiCall.get("/api/application/users");
     if(userError){
         return [null, userError];
     }

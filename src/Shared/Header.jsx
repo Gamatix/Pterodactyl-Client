@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import Input from "../components/Input";
 import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
 import { HiOutlineChatAlt, HiOutlineBell } from "react-icons/hi";
@@ -8,12 +8,45 @@ import { Fragment } from "react";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import userdata from "../services/userData.appwrite";
+import avatarFileServiceInstance from "../services/avatar.files.appwrite";
+import Avatar from 'react-avatar'
 function Header() {
   const ref = useRef(null);
+  const [userName, setUserName] = React.useState("User");
+  const [image, setImage] = React.useState();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
+  const userState = useSelector((state) => state.user.userData);
+  
+   const getUserData = async () => {  
+    
+    try {
+      console.log('User1:', userState);
+      const user = await userdata.getUserData(userState.$id);
+      console.log( 'User2:' , user);
+      const imageId = user.avatar;
+      if(!imageId){
+          return;
+      }
+      const filePreview = await avatarFileServiceInstance.getFilePreview(imageId);
+      console.log(filePreview);
+      setImage(filePreview.href);
+    }
+    catch (error) {
+      console.log(error);
+    }
+    
+  }
 
-  let userName = user?.userData?.name;
+  useEffect(() => {
+    if(userState && userState.name){
+
+      setUserName(userState.name);
+    }
+    getUserData();
+  }, [userState]);
+
+  
   return (
     <div className="  bg-white h-14 py-4 px-4 flex justify-between border-b border-gray-200 mb-2 items-center">
       <div className="relative">
@@ -104,14 +137,16 @@ function Header() {
           <div className="pt-2">
             <Menu.Button className="inline-flex  rounded-full focus:outline-none focus:ring-2 focus:ring-neutral-400 ml-2 ">
               <span className="sr-only ">Open user menu</span>
-              <div
+              {
+                image ?<div
                 className="h-10 w-10 rounded-full bg-sky-500 bg-cover bg-no-repeat bg-position-center"
                 style={{
-                  backgroundImage: `url("https://source.unsplash.com/80x80?face)`,
+                  backgroundImage: `url(${image})`,
                 }}
               >
-                <span className="sr-only ">Subhamoy Ghosh</span>
-              </div>
+                <span className="sr-only ">{userName}</span>
+              </div> : <Avatar name={userName} size="35" round={true} />
+              }
               <Transition
                 as={Fragment}
                 enter="transition ease-out duration-100"

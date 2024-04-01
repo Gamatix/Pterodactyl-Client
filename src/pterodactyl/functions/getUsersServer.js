@@ -1,7 +1,7 @@
 import apiCall from "./getAPI.js";
 async function getUsersServer(email) {
   const [usersResponse, usersError] = await apiCall.get(
-    "https://panel.how2mc.xyz/api/application/users"
+    "/api/application/users"
   );
   if (usersError) {
     return [null, usersError];
@@ -16,7 +16,7 @@ async function getUsersServer(email) {
   }
   const userid = user.attributes.id;
   const [serverResponse, serverError] = await apiCall.get(
-    "https://panel.how2mc.xyz/api/application/servers"
+    "/api/application/servers"
   );
   console.log("Server Response: ", serverResponse.data.data);
   const server = serverResponse.data.data.filter(

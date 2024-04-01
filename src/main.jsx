@@ -21,6 +21,7 @@ import { Provider } from "react-redux";
 import store from "./store/store.js";
 import Protected from "./Protected/Protected.jsx";
 import EditServer from "./pages/EditServer.jsx";
+import { Profile } from "./pages/Profile.jsx";
 const router = createBrowserRouter([
   {
     path: "*",
@@ -103,6 +104,14 @@ const router = createBrowserRouter([
         element: (
           <Protected>
             <EditServer />
+          </Protected>
+        ),
+      },
+      {
+        path: `/profile`,
+        element: (
+          <Protected>
+           <Profile/>
           </Protected>
         ),
       },
