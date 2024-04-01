@@ -161,32 +161,18 @@ function Header() {
                     {({ active }) => (
                       <div
                         className={classNames(
-                          active && "bg-gray-100",
+                          active && "bg-gray-200",
                           "text-gray-700 cursor-pointer focus:bg-gray-200 block rounded-sm px-4 py-2  "
                         )}
                         onClick={() => {
                           navigate("/profile");
                         }}
                       >
-                        Your Profile
+                         Profile
                       </div>
                     )}
                   </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <div
-                        className={classNames(
-                          active && "bg-gray-100",
-                          "text-gray-700 cursor-pointer focus:bg-gray-200 block rounded-sm px-4 py-2  "
-                        )}
-                        onClick={() => {
-                          navigate("/settings");
-                        }}
-                      >
-                        Settings
-                      </div>
-                    )}
-                  </Menu.Item>
+                  
                 </Menu.Items>
               </Transition>
             </Menu.Button>

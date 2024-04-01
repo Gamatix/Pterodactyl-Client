@@ -256,7 +256,7 @@ function Home() {
               id={server.attributes.id}
               description="All in One"
               price="Free"
-              country="USA"
+              country={server.attributes.node}
               city="New York"
               cpu={server.attributes.limits.cpu}
               ram={server.attributes.limits.memory}
