@@ -1,6 +1,6 @@
 import { Client, Account, ID } from "appwrite";
 
-export class userService {
+export class authService {
   client = new Client();
   account;
 
@@ -28,7 +28,8 @@ export class userService {
   }
   async login({ email, password }) {
     try {
-      return await this.account.createEmailSession(email, password);
+        console.log(email, password)
+      return await this.account.createEmailPasswordSession(email, password);
     } catch (error) {
       console.log("Error while logging in", error.message);
       throw error;
@@ -71,5 +72,5 @@ export class userService {
   
 }
 
-const userAccountService = new userService();
-export default userAccountService;
+const userAuthService = new authService();
+export default userAuthService;

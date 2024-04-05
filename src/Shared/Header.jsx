@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Input from "../components/Input";
 import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
 import { HiOutlineChatAlt, HiOutlineBell } from "react-icons/hi";
@@ -10,41 +10,58 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import userdata from "../services/userData.appwrite";
 import avatarFileServiceInstance from "../services/avatar.files.appwrite";
-import Avatar from 'react-avatar'
+import Avatar from "react-avatar";
+import announcementDetails from "../services/announcement.appwrite";
 function Header() {
   const ref = useRef(null);
+  const notifRef = useRef();
   const [userName, setUserName] = React.useState("User");
   const [image, setImage] = React.useState();
   const navigate = useNavigate();
   const userState = useSelector((state) => state.user.userData);
-  
-   const getUserData = async () => {  
-    
+  const [isAnnouncedFetch, setIsAnnouncedFetch] = useState(false);
+  const [announcements, setAnnouncements] = useState(null);
+  const fetchAllAnnouncements = async () => {
+    const res = await announcementDetails.fetchAllAnnouncements();
+    setAnnouncements(res.documents);
+ 
+
+  };
+
+  const getUserData = async () => {
     try {
-      console.log('User1:', userState);
+      console.log("User1:", userState);
       const user = await userdata.getUserData(userState.$id);
-      console.log( 'User2:' , user);
+      console.log("User2:", user);
       const imageId = user.avatar;
-      if(!imageId){
-          return;
+      if (!imageId) {
+        return;
       }
-      const filePreview = await avatarFileServiceInstance.getFilePreview(imageId);
+      const filePreview = await avatarFileServiceInstance.getFilePreview(
+        imageId
+      );
       console.log(filePreview);
       setImage(filePreview.href);
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
     }
-    
-  }
+  };
 
   useEffect(() => {
-    if(userState && userState.name){
-
+    if (userState && userState.name) {
       setUserName(userState.name);
     }
     getUserData();
   }, [userState]);
+
+  useEffect(() => {
+    fetchAllAnnouncements();
+  }, []);
+
+  useEffect(()=>{
+    fetchAllAnnouncements()
+  })
+
 
   
   return (
@@ -119,16 +136,37 @@ function Header() {
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="absolute right-0 z-10 mt-2.5 w-80">
-                  <div className="bg-white rounded-sm shadow-md ring-1  ring-black ring-opacity-5 px-2 py-2.5">
-                    <strong className="text-gray-700 font-medium">
-                      Notifications
-                    </strong>
-                    <div className="mt-2 py-0.5 text-sm">
-                      This is a panel notification
-                    </div>
+                <div ref={notifRef}>
+                <Popover.Panel className="absolute right-0 z-10 mt-2.5 w-80 notif" onClick={fetchAllAnnouncements}>
+                <div className="bg-white rounded-sm shadow-md ring-1  ring-black ring-opacity-5 px-2 py-2.5">
+                  <strong className="text-gray-700 font-medium">
+                    Notifications
+                  </strong>
+                  <div className="mt-2 py-0.5 text-sm">
+                    {announcements &&
+                      announcements.map((announcement, index) => {
+                        const hoursAgo = Math.floor(
+                          (new Date() - new Date(announcement.$updatedAt)) /
+                            1000 /
+                            60 /
+                            60
+                        );
+                        return (
+                          <div className="flex flex-row justify-between">
+                            
+                            <div
+                              className="bg-gray-400 mb-2 p-0.5 rounded-sm"
+                              key={index}
+                            >
+                              {announcement.content} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {hoursAgo} hours ago
+                            </div>
+                          </div>
+                        );
+                      })}
                   </div>
-                </Popover.Panel>
+                </div>
+              </Popover.Panel>
+                </div>
               </Transition>
             </>
           )}
@@ -137,16 +175,18 @@ function Header() {
           <div className="pt-2">
             <Menu.Button className="inline-flex  rounded-full focus:outline-none focus:ring-2 focus:ring-neutral-400 ml-2 ">
               <span className="sr-only ">Open user menu</span>
-              {
-                image ?<div
-                className="h-10 w-10 rounded-full bg-sky-500 bg-cover bg-no-repeat bg-position-center"
-                style={{
-                  backgroundImage: `url(${image})`,
-                }}
-              >
-                <span className="sr-only ">{userName}</span>
-              </div> : <Avatar name={userName} size="35" round={true} />
-              }
+              {image ? (
+                <div
+                  className="h-10 w-10 rounded-full bg-sky-500 bg-cover bg-no-repeat bg-position-center"
+                  style={{
+                    backgroundImage: `url(${image})`,
+                  }}
+                >
+                  <span className="sr-only ">{userName}</span>
+                </div>
+              ) : (
+                <Avatar name={userName} size="35" round={true} />
+              )}
               <Transition
                 as={Fragment}
                 enter="transition ease-out duration-100"
@@ -168,11 +208,10 @@ function Header() {
                           navigate("/profile");
                         }}
                       >
-                         Profile
+                        Profile
                       </div>
                     )}
                   </Menu.Item>
-                  
                 </Menu.Items>
               </Transition>
             </Menu.Button>

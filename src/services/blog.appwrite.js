@@ -50,11 +50,24 @@ class blogServiceClass {
     }
   }
 
+  async getActiveBlogs(queries = [Query.equal("status", "active")]) {
+    try {
+      const result = 
+      await this.databases.listDocuments(
+        String(import.meta.env.VITE_APPWRITE_DATABASE_ID),
+        String(import.meta.env.VITE_APPWRITE_COLLECTION_BLOG_ID),
+        queries
+      );
+      return result;
+    } catch (error) {
+      return [null, error];
+    }
+  }
   async deletePost(slug) {
     try {
       return this.databases.deleteDocument(
         String(import.meta.env.VITE_APPWRITE_DATABASE_ID),
-        String(import.meta.env.VITE_APPWRITE_BUCKET_BLOG_ID),
+        String(import.meta.env.VITE_APPWRITE_COLLECTION_BLOG_ID),
         slug
       );
     } catch (error) {
@@ -67,7 +80,7 @@ class blogServiceClass {
     try {
       return await this.databases.listDocuments(
         String(import.meta.env.VITE_APPWRITE_DATABASE_ID),
-        String(import.meta.env.VITE_APPWRITE_BUCKET_BLOG_ID),
+        String(import.meta.env.VITE_APPWRITE_COLLECTION_BLOG_ID),
         queries
       );
     } catch (error) {
@@ -80,7 +93,7 @@ class blogServiceClass {
     try {
       return await this.databases.getDocument(
         String(import.meta.env.VITE_APPWRITE_DATABASE_ID),
-        String(import.meta.env.VITE_APPWRITE_BUCKET_BLOG_ID),
+        String(import.meta.env.VITE_APPWRITE_COLLECTION_BLOG_ID),
         slug
       );
     } catch (error) {

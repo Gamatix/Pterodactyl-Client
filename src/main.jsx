@@ -22,6 +22,7 @@ import store from "./store/store.js";
 import Protected from "./Protected/Protected.jsx";
 import EditServer from "./pages/EditServer.jsx";
 import { Profile } from "./pages/Profile.jsx";
+import Blog from "./pages/Blog.jsx";
 const router = createBrowserRouter([
   {
     path: "*",
@@ -115,6 +116,14 @@ const router = createBrowserRouter([
           </Protected>
         ),
       },
+      {
+        path: `/blogs/:slug`,
+        element: (
+          <Protected>
+            <Blog />
+          </Protected>
+        )
+      }
       
     ],
   },

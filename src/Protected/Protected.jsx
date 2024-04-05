@@ -19,7 +19,7 @@ export default function Protected({ children , authentication = true}) {
     const email = localStorage?.email;
     console.log("Email login: ", email);
     
-    if (localStorage.password && localStorage.email && authService) {
+    if (localStorage.password && localStorage.email ) {
       const password = localStorage.password;
       console.log("Password login: ", password);
       try {
