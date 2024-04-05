@@ -8,7 +8,7 @@ const AllAnnouncements = () => {
     const res = await announcementDetails.newAnnouncement(newAnnouncement)
     console.log(res)
     fetchAllAnnouncements()
-    setNewAnnouncement = ''
+    setNewAnnouncement('')
   }
 
   const fetchAllAnnouncements = async() => {
