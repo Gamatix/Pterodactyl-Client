@@ -7,9 +7,10 @@ import RTE from "./Blogs/RTE";
 import BlogCard from "./Blogs/BlogCard";
 import BlogPost from "./Blogs/BlogPost";
 import AnnouncementCard from "./Announcements/AnnouncementCard";
+import OrderCard from "./Order/OrderCard";
 
 
 
 
 
-export {DashboardCards , Graph , Charts, RecentOrder, PostForm, RTE, BlogCard, BlogPost, AnnouncementCard};
+export {DashboardCards , Graph , Charts, RecentOrder, PostForm, RTE, BlogCard, BlogPost, AnnouncementCard, OrderCard};

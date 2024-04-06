@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { contactDetais } from '../appwrite'
 import ContactCard from '../components/Contacts/ContactCard'
-import { ToastContainer, toast, Flip } from 'react-toastify';
+import { ToastContainer, } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const AllContacts = () => {

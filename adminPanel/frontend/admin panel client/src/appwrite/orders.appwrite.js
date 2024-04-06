@@ -37,4 +37,4 @@ export class Orders{
 
 }
 const orders = new Orders()
-export default orders
+export default orders;

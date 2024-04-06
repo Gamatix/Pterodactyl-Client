@@ -2,12 +2,24 @@ import React from "react";
 import { RxDividerHorizontal } from "react-icons/rx";
 import { sideBarBottomMenu, sideBarTopMenu } from "../contstants";
 import Button from "@mui/material/Button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { logout, removeUserId } from "../store/userSlice";
+import { authService } from "../appwrite/auth.appwrite";
 
 const Sidebar = () => {
   const sideBarTopItems = sideBarTopMenu;
   const sideBarBottomItems = sideBarBottomMenu
+  const dispatch = useDispatch()
   const navigate = useNavigate()
+  const handleLogout = async() => {
+    await authService.logout()
+    dispatch(logout());
+    dispatch(removeUserId());
+    localStorage.removeItem('email')
+    localStorage.removeItem('password')
+    navigate('/admin/login')
+  };
   return (
     <div className="bg-neutral-800 w-[260px] text-neutral-100 flex flex-col">
       <div className=" h-[75px] ml-auto mr-auto mt-4 border-b border-gray-600">
@@ -40,6 +52,8 @@ const Sidebar = () => {
                     
                     variant="outlined" 
                     color="inherit"
+                    onClick={sideBarBottomItem.name === 'Logout' ? handleLogout : null}
+                    
                   >
                   {sideBarBottomItem.name}
                   </Button>

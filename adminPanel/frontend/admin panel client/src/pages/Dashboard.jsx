@@ -72,7 +72,7 @@ const Dashboard = () => {
 
       <div className="mt-4">
         Recent orders
-        <div className="bg-white w-[1500px] mt-3 rounded-lg h-[400px]">
+        <div className="bg-white w-[1500px] mt-3 rounded-lg mb-4 h-auto">
           <TableContainer component={Paper} >
             <Table >
             <TableHead>
