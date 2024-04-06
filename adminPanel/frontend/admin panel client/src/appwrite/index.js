@@ -3,4 +3,5 @@ import userDetails from "./user.appwrite";
 import blogDetails from "./blog.appwrite";
 import userAuthService from "./auth.appwrite";
 import blogImage from "./blogImage.appwrite";
-export {orders, userDetails, blogDetails, userAuthService, blogImage}
+import contactDetais from "./contact.appwrite";
+export {orders, userDetails, blogDetails, userAuthService, blogImage, contactDetais}

@@ -4,12 +4,14 @@ import { userLogin } from "../functions";
 import { useNavigate } from "react-router-dom";
 import { login, logout, removeUserId, setUserId } from "../store/userSlice";
 import { userAuthService } from "../appwrite";
+import useLogout from "../customHooks/logout";
 
 const Protected = ({ children }) => {
   const authStatus = useSelector((state) => state.user.status);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch()
+  const logout = useLogout()
   const checkAuth = async () => {
     if (localStorage.email && localStorage.password ) {
       try {
@@ -28,11 +30,9 @@ const Protected = ({ children }) => {
         throw error;
       }
     } else {
-      localStorage.removeItem('email')
-      localStorage.removeItem('password')
-      dispatch(logout())
-      dispatch(removeUserId())
-      navigate("/admin/login");
+      
+      logout()
+      navigate('/admin/login')
     }
   };
   useEffect(() => {
