@@ -13,6 +13,7 @@ const OrderCard = ({
   amount,
   productId,
   index,
+  setCount
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [user, setUser] = useState(null);
@@ -21,11 +22,16 @@ const OrderCard = ({
     if (res && !err) {
       console.log("User: ", res);
       setUser(res);
+      
     }
+    setCount(prevCount => prevCount + 1);
+   
   };
 
   useEffect(() => {
+    console.log('mounted  ')
     fetchUserDetails();
+    
   }, []);
 
   const generateInvoice = () => {
@@ -41,7 +47,7 @@ const OrderCard = ({
     <div className=" w-full mt-3 hover:bg-neutral-100 text-gray-800 h-auto font-semibold m-2 p-2 flex flex-wrap justify-between bg-gray-300 rounded-lg hover:shadow-sm hover:shadow-gray-600 cursor-pointer">
       <div className="font-bold">{index + 1}</div>
       <div> {orderId} </div>
-      <div className="w-[200px]">{user?.user_name.toUpperCase()}</div>
+      <div className="w-[200px]">{user ? user?.user_name.toUpperCase() : 'Loading...'}</div>
       <div> {productId} </div>
       <div> {total} </div>
       <div> {amount} </div>

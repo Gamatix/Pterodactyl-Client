@@ -5,21 +5,19 @@ import blogDetails from "../appwrite/blog.appwrite";
 import BlogCard from "../components/Blogs/BlogCard";
 import { Dialog } from "@headlessui/react";
 import { Modal, Typography, Box } from "@mui/material";
-
+import { ColorRing } from "react-loader-spinner";
 const AllBlogs = () => {
   const navigate = useNavigate();
   const [posts, setPosts] = React.useState([]);
   const [open, setOpen] = useState(false);
   const [deleteBlogId, setDeleteBlogId] = useState(null);
 
+  const [loading, setLoading] = useState(true);
   const blogDelete = async () => {
     console.log("The blog that will be deleted: ", deleteBlogId);
     const [response, error] = await blogDetails.deleteBlog(deleteBlogId);
-    console.log(
-      "DElete blog:",
-      response
-    )
-    ;(async () => {
+    console.log("DElete blog:", response);
+    (async () => {
       const [response, error] = await blogDetails.getAllBlogs();
       console.log(response);
       if (response) {
@@ -37,6 +35,7 @@ const AllBlogs = () => {
       if (response) {
         setPosts(response.documents);
       }
+      setLoading(false);
     })();
   }, []);
 
@@ -56,7 +55,21 @@ const AllBlogs = () => {
     p: 4,
   };
 
-  return (
+  return loading ? (
+    <div className="flex flex-row justify-center items-center w-full h-full">
+      <div className="m-auto">
+        <ColorRing
+          visible={true}
+          height="280"
+          width="280"
+          ariaLabel="color-ring-loading"
+          wrapperStyle={{}}
+          wrapperClass="color-ring-wrapper"
+          colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+        />
+      </div>
+    </div>
+  ) : (
     <div className="flex flex-col ml-4 mt-4">
       <div className="ml-auto mr-8">
         <Button
