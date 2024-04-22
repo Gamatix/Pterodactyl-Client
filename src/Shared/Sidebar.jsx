@@ -34,28 +34,28 @@ function Sidebar({ className = "" }) {
 
   return (
     <div
-      className={`px-3 flex flex-col  bg-neutral-900 w-60 ${className} overflow-hidden `}
+      className={`px-3 flex flex-col  bg-black  w-60 ${className} overflow-hidden `}
     >
-      <div className="flex items-center gap-2 px-3 py-5">
+      <div className="flex items-center gap-2 px-3 py-5 ">
         <Link to="/">
           <AcUnitIcon fontSize="large" htmlColor="cyan" />
           <span className="text-neutral-100 text-lg">How2MC Client</span>
         </Link>
       </div>
-      <div className="ml-auto mr-auto mb-4 bg-sky-300 rounded-lg px-4 ">
+      <div className="ml-auto mr-auto mb-4 bg-[#222] bg-opacity-80 py-1 rounded-lg px-4  shadow-sm shadow-white">
         <Button
-          style={{ color: "gray", fontWeight: "bold" }}
-          className="  hover:bg-neutral-200 hover:text-black hover:font-bold"
+          // style={{ color: "white", fontWeight: "bold" }}
+          className="  hover:bg-neutral-200 hover:text-black hover:font-bold text-white"
         >
           <Link
             to="/create-server"
-            className="text-neutral-800 hover:no-underline hover:text-black"
+            className="hover:no-underline text-neutral-50 hover:text-neutral-50 hover:border-x-slate-200"
           >
             Create Server
           </Link>
         </Button>
       </div>
-      <div className="flex-1 flex flex-col gap-0.5 px-1 ">
+      <div className="flex-1 flex flex-col gap-0.5 px-1 mt-2 ">
         {Sidebar_Top_Items.map((item) => (
           <SidebarLink key={item.key} item={item} />
         ))}

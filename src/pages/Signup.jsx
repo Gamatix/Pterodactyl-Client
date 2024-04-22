@@ -10,6 +10,7 @@ import postAPI from '../pterodactyl/functions/postAPI'
 import getUserByEmail from "../pterodactyl/functions/getUserByEmail";
 import userdata from "../services/userData.appwrite";
 import referral from "../services/referral.appwrite";
+import {BackgroundBeams} from "../components/BackgroundBeam"
 function Signup() {
   const {
     register,
@@ -144,10 +145,13 @@ function Signup() {
   }, [refCode])
 
   return (
-    <div className="w-screen h-screen flex flex-col bg-[rgb(240,240,240)]">
-      <div className=" w-[900px] h-[800px] flex m-auto  bg-[rgb(168,152,152)] rounded-lg  hover:shadow-md hover:shadow-red-400 flex-col  ">
+    <div className="w-screen h-screen flex flex-col justify-center items-center overflow-hidden text-neutral-50">
+    <BackgroundBeams
+          className="z-[-3]"
+        />
+      <div className=" w-[900px]  flex hover:shadow-md flex-col bg-[#131313] bg-opacity-30 rounded-lg  py-10 cursor-pointer">
         <div className="flex flex-col justify-center items-center">
-          <div className="w-1/2 h-1/2  bg-[rgb(240,240,240)] rounded-lg mt-14">
+          <div className="w-1/2 h-1/2   rounded-lg">
             <img
               src="https://source.unsplash.com/400x200?server"
               className="w-full h-full rounded-lg"
@@ -157,12 +161,12 @@ function Signup() {
             <div className="text-4xl font-bold">Sign Up</div>
             <div className="text-lg">Create an account to get started</div>
             <div className="flex flex-col gap-2 mt-4 justify-center items-center">
-              <form className="ml-[100px]" onSubmit={handleSubmit(signup)}>
+              <form className="ml-[100px] text-black " onSubmit={handleSubmit(signup)}>
                 <input
                   {...register("username", { required: true, unique: true })}
                   type="text"
                   placeholder="Username"
-                  className="w-60 h-10 rounded-md border mt-1 border-gray-300 px-2"
+                  className="w-60 h-10 rounded-md border mt-1 border-gray-300 px-2 "
                 />
                 {errors.username && <span>The field must be uniqe</span>}
                 <input
@@ -215,14 +219,14 @@ function Signup() {
                   placeholder="Referral Code"
                   className="w-60 h-10 rounded-md border mt-1 border-gray-300 px-2"
                 />
-                <button className="w-60 mt-1 h-10 bg-[rgb(240,240,240)] rounded-md border border-gray-300 cursor-pointer">
+                <button className="w-60 mt-3 h-10 rounded-md border border-orange-300 bg-orange-500 font-bold text-xl cursor-pointer text-white">
                   Sign Up
                 </button>
               </form>
             </div>
           </div>
-          <div className="flex flex-row justify-center items-center gap-2">
-            <div className="text-sm mt-4 underline">
+          <div className="flex flex-row justify-center items-center gap-2 mt-4">
+            <div className="text-sm mt-4 underline ">
               Already have an account?
             </div>
             <div className="text-sm text-indigo-100 translate-y-2   cursor-pointer">
@@ -245,6 +249,7 @@ function Signup() {
       {
         error && <div className="text-red-600 text-center">{error.message}</div>
       }
+     
     </div>
   );
 }

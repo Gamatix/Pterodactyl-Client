@@ -65,11 +65,11 @@ function Header() {
 
   
   return (
-    <div className="  bg-white h-14 py-4 px-4 flex justify-between border-b border-gray-200 mb-2 items-center">
+    <div className="  bg-black text-white h-14 py-4 px-4 flex justify-between border-b border-gray-200 mb-2 items-center">
       <div className="relative">
         <LocationSearchingIcon
           fontSize="medium"
-          className="text-gray-400 absolute top-1/2 -translate-y-3 left-2"
+          className="text-white absolute top-1/2 -translate-y-3 left-2"
         />
         <Input
           ref={ref}
@@ -78,7 +78,7 @@ function Header() {
           className="rounded-md placeholder:text-slate-700 text-black px-6 text-sm focus:outline-none active:outline-none h-10 w-[24rem] border border-gray-300 pl-11"
         />
       </div>
-      <div className="ml-auto mr-4 font-bold text-neutral-600">
+      <div className="ml-auto mr-4 font-bold text-neutral-100">
         Welcome, {userName}
       </div>
       <div className="flex items-center gap-[12px] mr-2">
@@ -88,7 +88,7 @@ function Header() {
               <Popover.Button
                 className={classNames(
                   open && "bg-gray-100",
-                  " p-1.5 rounded-sm inline-flex items-center text-gray-700 hover:text=opacity-100 focus:outline-none active:bg-gray-100"
+                  " p-1.5 rounded-sm inline-flex items-center text-neutral-100 hover:text=opacity-100 focus:outline-none focus:text-black active:bg-gray-100"
                 )}
               >
                 <HiOutlineChatAlt fontSize={24} />
@@ -122,7 +122,7 @@ function Header() {
               <Popover.Button
                 className={classNames(
                   open && "bg-gray-100",
-                  " p-1.5 rounded-sm inline-flex items-center text-gray-700 hover:text=opacity-100 focus:outline-none active:bg-gray-100"
+                  " p-1.5 rounded-sm inline-flex items-center focus:text-black text-neutral-100 hover:text-opacity-100 focus:outline-none active:bg-neutral-900"
                 )}
               >
                 <HiOutlineBell fontSize={24} />

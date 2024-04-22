@@ -55,7 +55,7 @@ function Panel() {
     console.log("Response: ", response);
   }
   return (
-    <div className="flex flex-col ml-2 mr-2 bg-[rgb(240,240,240)] h-[750px] p-2 rounded-lg">
+    <div className="flex flex-col ml-2 mr-2 bg-transparent h-[750px] p-2 rounded-lg text-white  bg-dot-white/[0.2] relative   mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] ">
       <div className="">
         <div>
           <h1 className="text-3xl font-bold">Game panel credentials</h1>

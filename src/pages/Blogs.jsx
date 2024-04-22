@@ -29,20 +29,22 @@ function Blogs() {
       wrapperClass="vortex-wrapper"
       colors={['red', 'green', 'blue', 'yellow', 'orange', 'purple']}
       /></div>) :
-    <div className="flex flex-col ml-2 mr-2 bg-[rgb(240,240,240)] h-[750px] p-2 rounded-lg">
+    <div className="flex flex-col ml-2 mr-2 bg-transparent h-[750px] p-2 rounded-lg bg-dot-white/[0.2] relative   mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]">
       <div className="font-bold text-3xl">
         <h1>Blogs</h1>
       </div>
       <div className="mt-2 mr-2 flex flex-wrap gap-4">
         {
           posts && posts.map((post , index) => (
+            <div key={post.$id || index} > 
             <PostCard
-              key={post.$id || index} 
+              
               title={post.title}
               description={post.content}
               image={blogImage.getFilePreview(post.featuredImage)}
               slug={post.$id}
             />
+            </div>
           ))
         }
         

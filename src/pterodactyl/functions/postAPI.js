@@ -16,7 +16,7 @@ class API {
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${import.meta.env.VITE_PTERODACTYL_API_KEY}`,
           },
       });
       console.log("Response is  ", response);

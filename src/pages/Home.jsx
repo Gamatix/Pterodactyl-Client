@@ -18,6 +18,14 @@ import { Button, Modal, Typography, Box } from "@mui/material";
 import ConfirmModal from "../components/ConfirmModal.jsx";
 import { set } from "react-hook-form";
 import userdata from "../services/userData.appwrite.js";
+import { BackgroundGradient } from "../components/BackgroundGradient";
+import { Spotlight } from "../components/Spotlight.tsx";
+import {
+  TextRevealCard,
+  TextRevealCardDescription,
+  TextRevealCardTitle,
+} from "../components/RevealCard.tsx";
+
 function Home() {
   const userId = useSelector((state) => state.user.userId);
   const user = useSelector((state) => state.user.userData);
@@ -178,19 +186,39 @@ function Home() {
   ) : (
     <div
       key={key}
-      className="flex flex-col overflow-y-auto bg-neutral-100 rounded-sm pb-4 "
+      className="flex flex-col overflow-y-auto bg-transparent text-neutral-50 rounded-sm pb-4 bg-dot-white/[0.2] relative   mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"
     >
-      <div className="px-2 py-2 ">
+      <div className="px-2 py-2 h-[300px] ">
         {(
-          <img
-            src="https://images.unsplash.com/photo-1580137189272-c9379f8864fd?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bmF0dXJlfHx8fHx8MTcxMTM2OTA1Mw&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1920"
-            width={1920}
-            height={180}
-          />
+          // <img
+          //   src="https://images.unsplash.com/photo-1580137189272-c9379f8864fd?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bmF0dXJlfHx8fHx8MTcxMTM2OTA1Mw&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1920"
+          //   width={1920}
+          //   height={180}
+          // />
+          <div className="">
+            <div className="flex items-center justify-center bg-[#0E0E10] rounded-2xl ">
+              <TextRevealCard
+                text="Welcome to GSM"
+                revealText="Wish you the best of luck"
+                className=" justify-center items-center"
+              >
+                <TextRevealCardTitle>
+                  Wandering for best game server hardwares ?
+                </TextRevealCardTitle>
+                <TextRevealCardDescription>
+                  Your wait is over. We provide you the best hardwares for your servers.
+                </TextRevealCardDescription>
+              </TextRevealCard>
+            </div>
+          </div>
         ) || <Skeleton height={180} width={1920} />}
       </div>
-      <div className="mx-2 my-0.5 border border-neutral-600 h-10 bg-neutral-100 rounded-lg px-2 py-1 ">
-        <div className="bg-neutral-200 py-0.5">
+      <Spotlight
+        className="-top-40 left-28 md:left-60 md:-top-20"
+        fill="white"
+      />
+      <div className="mx-2 my-0.5 border border-neutral-600 h-10 bg-neutral-800 rounded-lg px-2 py-1 ">
+        <div className="bg-neutral-800 py-0.5">
           Upgrade to premium now! Use code How25 for 25% off premium services.
           Don't miss out!
         </div>
@@ -247,27 +275,29 @@ function Home() {
           </div>
         ) : res[0] && res[0].length >= 1 ? (
           res[0].map((server) => (
-            <LongCard
-              onEdit={handleEditServer}
-              className="shadow-sm sgadow-neutral-200"
-              img="https://i0.wp.com/news.onepercentclub.io/wp-content/uploads/2024/03/lars-kienle-IlxX7xnbRF8-unsplash.jpg?resize=1024%2C575&ssl=1"
-              name={server.attributes.name}
-              key={server.attributes.id}
-              id={server.attributes.id}
-              description="All in One"
-              price="Free"
-              country={server.attributes.node}
-              city="New York"
-              cpu={server.attributes.limits.cpu}
-              ram={server.attributes.limits.memory}
-              disk={server.attributes.limits.disk}
-              databases={server.attributes.feature_limits.databases}
-              ports={server.attributes.feature_limits.allocations}
-              backups={server.attributes.feature_limits.backups}
-              onClick={() => console.log(server.attributes.id)}
-              onDelete={handleDeleteServer}
-              onOpen={handleServerOpen}
-            />
+            <BackgroundGradient className="w-auto h-auto">
+              <LongCard
+                onEdit={handleEditServer}
+                className="shadow-sm sgadow-neutral-200 "
+                img="https://i0.wp.com/news.onepercentclub.io/wp-content/uploads/2024/03/lars-kienle-IlxX7xnbRF8-unsplash.jpg?resize=1024%2C575&ssl=1"
+                name={server.attributes.name}
+                key={server.attributes.id}
+                id={server.attributes.id}
+                description="All in One"
+                price="Free"
+                country={server.attributes.node}
+                city="New York"
+                cpu={server.attributes.limits.cpu}
+                ram={server.attributes.limits.memory}
+                disk={server.attributes.limits.disk}
+                databases={server.attributes.feature_limits.databases}
+                ports={server.attributes.feature_limits.allocations}
+                backups={server.attributes.feature_limits.backups}
+                onClick={() => console.log(server.attributes.id)}
+                onDelete={handleDeleteServer}
+                onOpen={handleServerOpen}
+              />
+            </BackgroundGradient>
           ))
         ) : (
           <div className="w-full  ml-auto mr-auto mt-4 flex flex-col items-center">

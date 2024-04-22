@@ -23,6 +23,8 @@ import Protected from "./Protected/Protected.jsx";
 import EditServer from "./pages/EditServer.jsx";
 import { Profile } from "./pages/Profile.jsx";
 import Blog from "./pages/Blog.jsx";
+import { SignupFormDemo } from "./pages/test.tsx";
+import { LoginFormDemo } from "./newPages/NewLogin.tsx";
 const router = createBrowserRouter([
   {
     path: "*",
@@ -40,6 +42,7 @@ const router = createBrowserRouter([
           </Protected>
         ),
       },
+      
       {
         path: "servers",
         element: (
@@ -142,6 +145,10 @@ const router = createBrowserRouter([
         <Signup />
       </Protected>
     ),
+  },
+  {
+    path: 'test',
+    element: <LoginFormDemo />
   },
   {
     path: `/join/:referralCode`,

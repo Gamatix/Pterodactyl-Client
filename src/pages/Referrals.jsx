@@ -9,11 +9,14 @@ import referral from "../services/referral.appwrite";
 import { useSelector } from "react-redux";
 import userAccountService from "../services/user.appwrite";
 import { Pagination } from "@mui/material";
-import {InfinitySpin} from 'react-loader-spinner'
+import { InfinitySpin } from "react-loader-spinner";
+import { TypewriterEffect } from "../components/TypeWritterText";
+import { Meteors } from "../components/Meteors";
+
 function ReferalCard({ text1, text2, children = <HiOutlineUserGroup /> }) {
   return (
     <div className="translate-y-[80px] shadow-md shadow-neutral-700 ring-1 ring-neutral-400 mt-2 mb-2 mr-4">
-      <div className="w-[300px] h-[100px] bg-slate-600 flex flex-row rounded-lg bg-opacity-80 place-content-around">
+      <div className="w-[300px] h-[100px] bg-slate-600 bg-opacity-30 flex flex-row rounded-lg place-content-around">
         <div className="text-3xl text-white  mt-auto mb-auto pl-1 ml-6 mr-1  ">
           {children}
         </div>
@@ -54,101 +57,123 @@ function Referrals() {
     setPage(newPage);
   };
 
-  const [loading, setLoading] = React.useState(true)
-  const [referalInfo, setReferralInfo] = React.useState([])
+  const [loading, setLoading] = React.useState(true);
+  const [referalInfo, setReferralInfo] = React.useState([]);
   const userData = useSelector((state) => state.user.userData);
-  console.log('Userdata: ', userData)
-  async function referralData(){
-    const referralData = await referral.getReferralDocument(userData.$id)
-    console.log(referralData[0])
-    setReferralInfo(referralData[0])
+  console.log("Userdata: ", userData);
+  async function referralData() {
+    const referralData = await referral.getReferralDocument(userData.$id);
+    console.log(referralData[0]);
+    setReferralInfo(referralData[0]);
   }
- 
-  async function  getUserEmail(uid){
-    console.log('UID: ', uid)
-    const user =  await userAccountService.getUser(uid)
-    console.log('Called user: ', user)
-    return [user.email, user.name]
+
+  async function getUserEmail(uid) {
+    console.log("UID: ", uid);
+    const user = await userAccountService.getUser(uid);
+    console.log("Called user: ", user);
+    return [user.email, user.name];
   }
   const [userEmails, setUserEmails] = React.useState([]);
   useEffect(() => {
-    referralData()
-    getUserEmail()
+    referralData();
+    getUserEmail();
 
     return () => {
-      setReferralInfo([])
-      
-    }
-  }, [])
-
-  
+      setReferralInfo([]);
+    };
+  }, []);
+  const [pteroLink, setPteroLink] = useState(null);
 
   React.useEffect(() => {
-    if(referalInfo && referalInfo.refferedUserId){
-      console.log('Referral Info: ', referalInfo)
+    if (referalInfo && referalInfo.refferedUserId) {
+      console.log("Referral Info: ", referalInfo);
       const fetchUserEmails = async () => {
         for (const referral of referalInfo.refferedUserId) {
-          console.log('Referral: ', referral);
+          console.log("Referral: ", referral);
           const [email, name] = await getUserEmail(referral);
-          setUserEmails(prevEmails => [...prevEmails, { email, name }]);
+          setUserEmails((prevEmails) => [...prevEmails, { email, name }]);
         }
-       
-        
-        setLoading(false)
+        const words = [
+          {
+            text: "https://ptero.how2mc.xyz/join/",
+          },
+          {
+            text: referalInfo.referralCode,
+          },
+        ];
+        setPteroLink(words);
+        console.log("ptero link: ", pteroLink);
+        setLoading(false);
       };
-  
+
       fetchUserEmails();
     }
-    
+
     return () => {
       setUserEmails([]);
-    }
-    
+    };
   }, [referalInfo]);
 
   React.useEffect(() => {
-    console.log('userEmails:', userEmails);
-   
-      
-  }, [userEmails ]);
-  const  [isCopied, setIsCopied] = React.useState(false)
-  return (
-    loading ? <div className="flex flex-row justify-center h-screen items-center" ><InfinitySpin/></div> : 
-    referalInfo && referalInfo.length === 0 ? <div>Loading...</div> :
-    <div className="flex flex-col ml-2 mr-2 bg-[rgb(240,240,240)] h-auto rounded-lg mb-auto ">
-      <div className="p-4">
+    console.log("userEmails:", userEmails);
+  }, [userEmails]);
+  const [isCopied, setIsCopied] = React.useState(false);
+
+  //https://ptero.how2mc.xyz/join/{referalInfo.referralCode }
+
+  return loading ? (
+    <div className="flex flex-row justify-center h-screen items-center overflow-hodden">
+      <InfinitySpin />
+    </div>
+  ) : referalInfo && referalInfo.length === 0 ? (
+    <div>Loading...</div>
+  ) : (
+    <div className="flex flex-col ml-2 mr-2 bg-transparent h-auto rounded-lg mb-auto text-white overflow-y-hidden">
+      <div className="p-2">
         <div>
           <h2 className="font-bold text-3xl">Referrals</h2>
         </div>
-        <p className="text-neutral-700 shadow-sm">
+        <p className="text-neutral-300 shadow-sm">
           Share your referral link to earn coins every time a user registers
           using your link.
         </p>
         <div className="mt-4">
-          <div className="text-black mb-1 font-semibold underline">
+          <div className="text-neutral-200 mb-1 font-semibold underline">
             Your referral link. Click to copy and earn coins!.
           </div>
           <div className="flex flex-row gap-2">
             <p className="text-xl font-bold">
-              <Link>https://ptero.how2mc.xyz/join/{referalInfo.referralCode}</Link>
+              <Link className="hidden">
+                https://ptero.how2mc.xyz/join/{referalInfo.referralCode}
+              </Link>
+              {pteroLink && (
+                <TypewriterEffect
+                  words={pteroLink}
+                  className="text-white text-[5px]"
+                />
+              )}
             </p>
 
-            <FaCopy className={` text-${isCopied ? 'green' :'neutral-800' } cursor-pointer translate-y-1 pl-1 text-neutral-800 text-[20px]`}
-            onClick={async() => {
-              await navigator.clipboard.writeText(`https://ptero.how2mc.xyz/join/${referalInfo.referralCode}`)
-              setIsCopied(true);
-              setTimeout(() => {
-                setIsCopied(false)
-              }, 3000)
-            }}
-           
+            <FaCopy
+              className={` text-${
+                isCopied ? "green" : "neutral-200"
+              } cursor-pointer translate-y-5 pl-1 text-neutral-200 text-[20px]`}
+              onClick={async () => {
+                await navigator.clipboard.writeText(
+                  `https://ptero.how2mc.xyz/join/${referalInfo.referralCode}`
+                );
+                setIsCopied(true);
+                setTimeout(() => {
+                  setIsCopied(false);
+                }, 3000);
+              }}
             />
-            {
-              isCopied && <div className="text-blue-600 ml-3 translate-y-1">Copied!</div>
-            }
+            {isCopied && (
+              <div className="text-blue-600 ml-3 translate-y-1">Copied!</div>
+            )}
           </div>
           <div className="mt-1.5 ">
-            <p className="text-neutral-900">
+            <p className="text-neutral-400">
               Earned coins canbe used to excahnge for premium services and
               resources.
             </p>
@@ -156,27 +181,38 @@ function Referrals() {
           <div className="flex flex-row justify-between ">
             <div className="flex flex-col">
               <div className="mt-6 font-extrabold text-3xl">Your referrals</div>
-              <div className="h-[480px] w-[1200px] bg-slate-300 mt-4 rounded-lg flex flex-row">
+              <div className="h-[480px] w-[1200px] bg-[#111] bg-opacity-70  mt-4 rounded-lg flex flex-row  bg-dot-white/[0.2] relative  [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]">
                 <div className="flex flex-row">
                   <div className="m-4">
-                  {
-                    userEmails 
-                      ? userEmails.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((user, index) => {
+                    {userEmails ? (
+                      userEmails
+                        .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+                        .map((user, index) => {
                           /*return <RefreadlTransparentCard username={user.name} email={user.email} />*/
-                          return <div key={index} className="mt-2 w-[140px]">  <img 
-                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLl6vunE9mphDIu0Ky-W6K6_NeqEIt0i932Q&usqp=CAU"
-                        /></div>
+                          return (
+                            <div key={index} className="mt-2 w-[140px]">
+                              {" "}
+                              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLl6vunE9mphDIu0Ky-W6K6_NeqEIt0i932Q&usqp=CAU" />
+                            </div>
+                          );
                         })
-                      : <div>Loading...</div>
-                  }
-                    
+                    ) : (
+                      <div>Loading...</div>
+                    )}
                   </div>
                 </div>
-                
-              </div>  
+              </div>
+              
             </div>
             <div className="flex flex-col">
-            <ReferalCard text1={"Total referrals"} text2={referalInfo && referalInfo.refferedUserId ?  referalInfo.refferedUserId.length : 10} />
+              <ReferalCard
+                text1={"Total referrals"}
+                text2={
+                  referalInfo && referalInfo.refferedUserId
+                    ? referalInfo.refferedUserId.length
+                    : 10
+                }
+              />
               <ReferalCard
                 text1={"Coins per referral"}
                 text2={"10"}
@@ -188,17 +224,30 @@ function Referrals() {
                 children={<CiMoneyBill />}
               />
               <ReferalCard
-              text1={"Coins earned"}
-              text2={referalInfo && referalInfo.refferedUserId ?  referalInfo.refferedUserId.length * 10: 0}
-              children={<CiWallet />}
-            />
+                text1={"Coins earned"}
+                text2={
+                  referalInfo && referalInfo.refferedUserId
+                    ? referalInfo.refferedUserId.length * 10
+                    : 0
+                }
+                children={<CiWallet />}
+              />
             </div>
           </div>
         </div>
       </div>
-     <div className="ml-auto mr-auto mb-auto"> 
-     <Pagination count={Math.ceil(userEmails.length / itemsPerPage)} page={page} onChange={handleChangePage} />
-     </div>
+      <div className="ml-auto mr-auto mb-auto text-white">
+        {
+          userEmails.length &&
+          <Pagination
+          count={Math.ceil(userEmails.length / itemsPerPage)}
+          page={page}
+          onChange={handleChangePage}
+          color="secondary"
+        />
+        }
+      </div>
+      {/*<Meteors number={20} />*/}
     </div>
   );
 }

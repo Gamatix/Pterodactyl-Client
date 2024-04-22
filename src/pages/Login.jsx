@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { login as authlogin, setUserId } from "../store/userSlice";
 import getUserByEmail from "../pterodactyl/functions/getUserByEmail";
 import { DNA } from "react-loader-spinner"; 
+import {BackgroundBeams } from "../components/BackgroundBeam"
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -56,8 +57,11 @@ function Login() {
     wrapperStyle={{}}
     wrapperClass="dna-wrapper"
     /> </div>:
-    <div className="w-screen h-screen flex flex-col bg-[rgb(240,240,240)]">
-      <div className=" w-[900px] h-[700px] flex m-auto  bg-[rgb(168,152,152)] rounded-lg  hover:shadow-md hover:shadow-red-400 flex-col  ">
+    <div className="w-screen h-screen flex flex-col text-neutral-50  ">
+      <div className=" w-[900px] h-[700px] flex m-auto rounded-lg  hover:shadow-md  flex-col bg-[#131313] bg-opacity-30  ">
+        <BackgroundBeams
+          className="z-[-3]"
+        />
         <div className="flex flex-col justify-center items-center">
           <div className="w-1/2 h-1/2  bg-[rgb(240,240,240)] rounded-lg mt-16">
             <img
@@ -74,7 +78,7 @@ function Login() {
                   {...register("email", { required: true })}
                   type="email"
                   placeholder="Email"
-                  className="w-60 h-10 rounded-md border border-gray-300 px-2 mt-2"
+                  className="w-60 h-10 rounded-md border text-black border-gray-300 px-2 mt-2"
                 />
                 {errors.email && (
                   <div>
@@ -88,7 +92,7 @@ function Login() {
                   {...register("password", { required: true })}
                   type="password"
                   placeholder="Password"
-                  className="w-60 h-10 rounded-md border border-gray-300 px-2 mt-2"
+                  className="w-60 h-10 rounded-md border text-black border-gray-300 px-2 mt-2"
                 />
                 {errors.password && (
                   <div>
@@ -97,7 +101,7 @@ function Login() {
                   </div>
                 )}
 
-                <button className="w-60 h-10 mt-2 bg-[rgb(240,240,240)] rounded-md border border-gray-300 cursor-pointer">
+                <button className="w-60 h-10 mt-2 bg-transparent rounded-md border border-gray-300 cursor-pointer">
                   Sign In
                 </button>
               </form>

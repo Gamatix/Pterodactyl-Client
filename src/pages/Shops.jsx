@@ -21,15 +21,15 @@ function Card({ text, children, coins, resource, param , onCardClick , type , se
       setAmount(coins)
       onCardClick( coins)
     }}>
-      <div className=" mt-2 flex flex-row bg-indigo-300 w-[350px] h-[85px] rounded-lg cursor-pointer hover:shadow-md hover:shadow-gray-600">
-        <div className="mt-auto mb-auto ml-4 ">{children}</div>
+      <div className=" bg-dot-white/[0.2] relative  mt-2 flex flex-row bg-slate-700 bg-opacity-20 shadow-neutral-700 border border-white w-[350px] h-[85px] rounded-lg cursor-pointer hover:shadow-md hover:shadow-gray-600">
+        <div className="mt-auto mb-auto ml-4 text-white ">{children}</div>
         <div className="flex flex-col mr-auto mt-auto mb-auto ml-4">
           <div className="font-bold text-neutral-100  shadow-gray-300">
             {text}
           </div>
-          <div className="flex flex-row m-auto font-bold text-neutral-700 text-lg">
+          <div className="flex flex-row m-auto font-bold text-neutral-300 text-lg">
             <div> {coins}💎 </div>
-            <div className="text-neutral-500 -translate-y-0.5 text-[16px]">
+            <div className=" -translate-y-0.5 text-[16px] text-fuchsia-200">
               &nbsp; for {resource}
               {param}
             </div>
@@ -380,11 +380,11 @@ const updateServerLimits = async (newLimits) => {
   }, []);
 
   return (
-    <div className="flex flex-col ml-2 mr-2 bg-[rgb(240,240,240)] flex-1 rounded-lg mb-2 pb-6 ">
+    <div className="flex flex-col ml-2 mr-2 bg-transparent flex-1 rounded-lg mb-2 pb-6 ">
       <div className="flex flex-row justify-between mr-2 mt-2 rounded-lg">
       
-      <p className="font-bold text-3xl ml-2 mt-2 translate-y-8">Shops</p>
-      <div className="w-[400px] h-[130px] bg-neutral-500 flex flex-col rounded-lg justify-center"> 
+      <p className="font-bold text-3xl ml-2 mt-2 translate-y-8 text-white">Shops</p>
+      <div className="w-[400px] h-[130px] bg-slate-700 bg-opacity-10 flex flex-col rounded-lg items-center justify-center border border-neutral-200"> 
         <div className="text-white ml-4 text-2xl">
           Total Coins
         </div>
@@ -397,7 +397,7 @@ const updateServerLimits = async (newLimits) => {
       </div>
       </div>
       <div>
-        <p className="text-neutral-700 ml-2 mt-2 font-bold text-xl">
+        <p className="text-neutral-100 ml-2 mt-2 font-bold text-xl">
           Coin items
         </p>
       </div>
@@ -481,12 +481,12 @@ const updateServerLimits = async (newLimits) => {
           <div className="flex flex-row justify-center items-center">
             <div>
               {" "}
-              <p className="mr-4 font-bold text-neutral-800 text-[30px] hover:random">
+              <p className="mr-4 font-bold text-neutral-100 text-[30px] hover:random">
                 Coins
               </p>
             </div>
 
-            <div className="bg-slate-700 w-full flex-1 h-[2px] mr-8 hover:bg-red-700"></div>
+            <div className="bg-gradient-to-t bg-neutral-300 w-full flex-1 h-[2px] mr-8 hover:bg-red-700"></div>
           </div>
           <div className="flex flex-col ">
             <div className="flex flex-row">
