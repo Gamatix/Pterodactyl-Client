@@ -11,7 +11,7 @@ import userAccountService from "../services/user.appwrite";
 import { Pagination } from "@mui/material";
 import { InfinitySpin } from "react-loader-spinner";
 import { TypewriterEffect } from "../components/TypeWritterText";
-import { Meteors } from "../components/Meteors";
+import ReferralCard from "../components/ReferralCard";
 
 function ReferalCard({ text1, text2, children = <HiOutlineUserGroup /> }) {
   return (
@@ -51,7 +51,7 @@ function RefreadlTransparentCard({
 }
 
 function Referrals() {
-  const itemsPerPage = 5; // Set the number of items per page
+  const itemsPerPage = 10; // Set the number of items per page
   const [page, setPage] = useState(1); // Set the initial page
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -83,10 +83,11 @@ function Referrals() {
     };
   }, []);
   const [pteroLink, setPteroLink] = useState(null);
-
+  const [referredUserId, setReferredUserId] = useState(null);
   React.useEffect(() => {
     if (referalInfo && referalInfo.refferedUserId) {
       console.log("Referral Info: ", referalInfo);
+      setReferredUserId(referalInfo.refferedUserId);
       const fetchUserEmails = async () => {
         for (const referral of referalInfo.refferedUserId) {
           console.log("Referral: ", referral);
@@ -128,8 +129,8 @@ function Referrals() {
   ) : referalInfo && referalInfo.length === 0 ? (
     <div>Loading...</div>
   ) : (
-    <div className="flex flex-col ml-2 mr-2 bg-transparent h-auto rounded-lg mb-auto text-white overflow-y-hidden">
-      <div className="p-2">
+    <div className="flex flex-col ml-2 mr-2 bg-transparent h-auto rounded-lg mb-auto text-white ">
+      <div className="px-2 ">
         <div>
           <h2 className="font-bold text-3xl">Referrals</h2>
         </div>
@@ -181,28 +182,21 @@ function Referrals() {
           <div className="flex flex-row justify-between ">
             <div className="flex flex-col">
               <div className="mt-6 font-extrabold text-3xl">Your referrals</div>
-              <div className="h-[480px] w-[1200px] bg-[#111] bg-opacity-70  mt-4 rounded-lg flex flex-row  bg-dot-white/[0.2] relative  [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]">
-                <div className="flex flex-row">
-                  <div className="m-4">
-                    {userEmails ? (
-                      userEmails
+              <div className="h-[480px] w-[1250px] bg-[#111] bg-opacity-70 p-4  mt-4 rounded-lg bg-dot-white/[0.2] relative  ">
+                <div className="flex flex-wrap justify-start mt-10 items-center my-auto">
+
+                    {referredUserId ? (
+                      referredUserId
                         .slice((page - 1) * itemsPerPage, page * itemsPerPage)
-                        .map((user, index) => {
-                          /*return <RefreadlTransparentCard username={user.name} email={user.email} />*/
-                          return (
-                            <div key={index} className="mt-2 w-[140px]">
-                              {" "}
-                              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLl6vunE9mphDIu0Ky-W6K6_NeqEIt0i932Q&usqp=CAU" />
-                            </div>
-                          );
+                        .map((id) => {
+                          return <ReferralCard key={id} id={id} />;
                         })
                     ) : (
                       <div>Loading...</div>
                     )}
-                  </div>
+            
                 </div>
               </div>
-              
             </div>
             <div className="flex flex-col">
               <ReferalCard
@@ -236,16 +230,18 @@ function Referrals() {
           </div>
         </div>
       </div>
-      <div className="ml-auto mr-auto mb-auto text-white">
-        {
-          userEmails.length &&
+      <div className="ml-auto mt-1 mr-auto mb-auto p-2 rounded-lg  bg-blue-500 bg-opacity-60">
+        {userEmails.length && (
           <Pagination
-          count={Math.ceil(userEmails.length / itemsPerPage)}
-          page={page}
-          onChange={handleChangePage}
-          color="secondary"
-        />
-        }
+            count={Math.ceil(userEmails.length / itemsPerPage)}
+            page={page}
+            onChange={handleChangePage}
+            color="secondary"
+            variant="text" 
+            className="text-white "
+            
+          />
+        )}
       </div>
       {/*<Meteors number={20} />*/}
     </div>

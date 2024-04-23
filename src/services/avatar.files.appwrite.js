@@ -39,9 +39,9 @@ export class fileService {
     }
   }
 
-  async getFilePreview(fileId) {
+   getFilePreview(fileId) {
     try {
-      return await this.bucket.getFilePreview(
+      return  this.bucket.getFilePreview(
         String(import.meta.env.VITE_APPWRITE_BUCKET_AVATAR_ID),
         fileId
       );

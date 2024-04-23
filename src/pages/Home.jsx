@@ -190,11 +190,7 @@ function Home() {
     >
       <div className="px-2 py-2 h-[300px] ">
         {(
-          // <img
-          //   src="https://images.unsplash.com/photo-1580137189272-c9379f8864fd?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=300&ixid=MnwxfDB8MXxyYW5kb218MHx8bmF0dXJlfHx8fHx8MTcxMTM2OTA1Mw&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=1920"
-          //   width={1920}
-          //   height={180}
-          // />
+         
           <div className="">
             <div className="flex items-center justify-center bg-[#0E0E10] rounded-2xl ">
               <TextRevealCard

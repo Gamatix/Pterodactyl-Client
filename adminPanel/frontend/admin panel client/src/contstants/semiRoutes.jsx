@@ -1,6 +1,7 @@
 import { Dashboard , EditBlog ,AllAnnouncements, AllOrders, AllBlogs ,AllContacts, AddBlogs, Blog} from "../pages";
 import React from "react";
 import Protected from "../protected/Protected";
+import Vouchers from "../pages/Vouchers";
 
 const semiRoutes = [
     {
@@ -34,6 +35,10 @@ const semiRoutes = [
     {
         path: `/admin/edit/blog/:id`,
         element: <Protected> <EditBlog/> </Protected>
+    },
+    {
+        path: `/admin/vouchers`,
+        element: <Protected> <Vouchers/> </Protected>
     }
 
 ]

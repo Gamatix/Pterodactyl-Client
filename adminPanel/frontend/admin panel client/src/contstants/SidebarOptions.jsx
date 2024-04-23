@@ -27,6 +27,11 @@ export const sideBarTopMenu = [
         name: 'Orders',
         path : '/admin/orders',
         icon: <FaFirstOrderAlt />
+    },
+    {
+        name: 'Vouchers',
+        path: '/admin/vouchers'
+        
     }
 ];
 

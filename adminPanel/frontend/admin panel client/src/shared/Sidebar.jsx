@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import { useNavigate , } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { logout, removeUserId } from "../store/userSlice";
-import { authService } from "../appwrite/auth.appwrite";
+import userAuthService from "../appwrite/auth.appwrite";
 
 const Sidebar = () => {
   const sideBarTopItems = sideBarTopMenu;
@@ -13,7 +13,7 @@ const Sidebar = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const handleLogout = async() => {
-    await authService.logout()
+    await userAuthService.logout()
     dispatch(logout());
     dispatch(removeUserId());
     localStorage.removeItem('email')
