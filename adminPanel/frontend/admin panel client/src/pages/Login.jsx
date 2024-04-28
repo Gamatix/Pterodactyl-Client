@@ -4,10 +4,11 @@ import {adminEmails} from "../contstants";
 import { userLogin } from "../functions";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setUserId, login as storeLogin } from "../store/userSlice";
+import { logout, setUserId, login as storeLogin } from "../store/userSlice";
 import { userAuthService } from "../appwrite";
 
-const Login = () => {
+const Login =  () => {
+ 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null)
@@ -17,7 +18,7 @@ const Login = () => {
     
     if(adminEmails.includes(email)){
         setError(null)
-        
+      
         const session = await userLogin({email, password})
         if(session){
             console.log(session)

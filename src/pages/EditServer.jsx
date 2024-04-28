@@ -281,7 +281,7 @@ import userdata from '../services/userData.appwrite'
         </div>
        {/*Remaining Resources */}
         <div>
-            <h2 className='text-xl font-semibold'>Remaining Resources</h2>
+            <h2 className='text-xl font-semibold text-white'>Remaining Resources</h2>
             <div className='flex flex-row gap-6 mt-2 text-xl font-semibold cursor-pointer hover:bg-neutral-400 hover:text-neutral-900 hover:font-extrabold bg-neutral-300 w-[500px] justify-between h-[150px] items-center rounded-lg shadow-md shadow-black'>
                 <div className='flex flex-col ml-4'>
                     <div>CPU: {remainingCPU} %</div>
@@ -308,7 +308,7 @@ import userdata from '../services/userData.appwrite'
             id="outlined-basic"
             label="CPU (%)"
             variant="outlined"
-            color="primary"
+            color="secondary"
             className="mt-2 w-[600px] bg-neutral-200 rounded-lg text-neutral-800 active:border-neutral-500  focus:border-neutral-500 "
           />
           <TextField

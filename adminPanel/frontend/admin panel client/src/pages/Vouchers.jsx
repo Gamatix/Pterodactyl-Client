@@ -5,7 +5,7 @@ import ExistedVoucher from "../components/ExistedVoucher";
 import { ToastContainer, toast } from "react-toastify";
 const Vouchers = () => {
   const addVoucher = async () => {
-    await voucherObj.createVoucher(coins, use, date);
+    await voucherObj.createVoucher(parseInt(coins), parseInt(use), date);
     success()
     fetchAllVouchers();
   };
@@ -62,7 +62,7 @@ const Vouchers = () => {
               fullWidth
               size="small"
               placeholder="Amount of coins"
-              onChange={(e) => setCoins(e.target.value)}
+              onChange={(e) => setCoins(parseInt(e.target.value))}
             />
           </div>
           <div className="mt-1">
@@ -71,7 +71,7 @@ const Vouchers = () => {
               fullWidth
               size="small"
               placeholder="Number of uses"
-              onChange={(e) => setUse(e.target.value)}
+              onChange={(e) => setUse(parseInt(e.target.value))}
             />
           </div>
           <div className="mt-1">

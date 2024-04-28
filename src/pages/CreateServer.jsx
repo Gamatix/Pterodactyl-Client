@@ -385,6 +385,8 @@ function CreateServer() {
       return;
     }
     if (newTotalDatabase > limits.database) {
+      console.log('new total database1:' , newTotalDatabase)
+      console.log('new total database2:' , limits.database)
       setErrorMessage("You have exceeded the database limit");
      
       setDatabases(totalDatabase)
