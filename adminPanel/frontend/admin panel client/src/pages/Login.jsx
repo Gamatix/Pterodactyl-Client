@@ -18,17 +18,20 @@ const Login =  () => {
     
     if(adminEmails.includes(email)){
         setError(null)
-      
-        const session = await userLogin({email, password})
-        if(session){
-            console.log(session)
-            localStorage.setItem('email',  email)
-            localStorage.setItem('password', password)
-            const loggedInUser = await userAuthService.getAccount()
-            dispatch(storeLogin(loggedInUser))
-            dispatch(setUserId(loggedInUser?.$id))
+        localStorage.setItem('email',  email)
+        localStorage.setItem('password', password)
+
+        // const session = await userLogin({email, password})
+        
+        // if(session){
+        //     console.log(session)
+        //     localStorage.setItem('email',  email)
+        //     localStorage.setItem('password', password)
+        //     const loggedInUser = await userAuthService.getAccount()
+        //     dispatch(storeLogin(loggedInUser))
+        //     dispatch(setUserId(loggedInUser?.$id))
             navigate('/')
-        }
+        // }
     }
     else{
         setError('The email is invalid for admin login')
