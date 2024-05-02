@@ -24,14 +24,12 @@ function Header() {
   const fetchAllAnnouncements = async () => {
     const res = await announcementDetails.fetchAllAnnouncements();
     setAnnouncements(res.documents);
- 
-
   };
 
   const getUserData = async () => {
     try {
       console.log("User1:", userState);
-      const user = await userdata.getUserData(userState.$id);
+      const user = await userdata.getUserData(userState?.$id);
       console.log("User2:", user);
       const imageId = user.avatar;
       if (!imageId) {
@@ -51,20 +49,21 @@ function Header() {
     if (userState && userState.name) {
       setUserName(userState.name);
     }
-    getUserData();
+    if (userState) {
+      getUserData();
+    }
   }, [userState]);
 
   useEffect(() => {
     fetchAllAnnouncements();
   }, []);
 
-  useEffect(()=>{
-    fetchAllAnnouncements()
-  })
+  useEffect(() => {
+    fetchAllAnnouncements();
+  });
 
-
-  
   return (
+
     <div className="  bg-black text-white h-14 py-4 px-4 flex justify-between border-b border-gray-200 mb-2 items-center">
       <div className="relative">
         <LocationSearchingIcon
@@ -137,35 +136,42 @@ function Header() {
                 leaveTo="opacity-0 translate-y-1"
               >
                 <div ref={notifRef}>
-                <Popover.Panel className="absolute right-0 z-10 mt-2.5 w-80 notif" onClick={fetchAllAnnouncements}>
-                <div className="bg-white rounded-sm shadow-md ring-1  ring-black ring-opacity-5 px-2 py-2.5">
-                  <strong className="text-gray-700 font-medium">
-                    Notifications
-                  </strong>
-                  <div className="mt-2 py-0.5 text-sm">
-                    {announcements &&
-                      announcements.map((announcement, index) => {
-                        const hoursAgo = Math.floor(
-                          (new Date() - new Date(announcement.$updatedAt)) /
-                            1000 /
-                            60 /
-                            60
-                        );
-                        return (
-                          <div className="flex flex-row justify-between">
-                            
-                            <div
-                              className="bg-gray-400 mb-2 p-0.5 rounded-sm"
-                              key={index}
-                            >
-                              {announcement.content} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {hoursAgo} hours ago
-                            </div>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
-              </Popover.Panel>
+                  <Popover.Panel
+                    className="absolute right-0 z-10 mt-2.5 w-80 notif"
+                    onClick={fetchAllAnnouncements}
+                  >
+                    <div className="bg-white rounded-sm shadow-md ring-1  ring-black ring-opacity-5 px-2 py-2.5">
+                      <strong className="text-gray-700 font-medium">
+                        Notifications
+                      </strong>
+                      <div className="mt-2 py-0.5 text-sm">
+                        {announcements &&
+                          announcements.map((announcement, index) => {
+                            const hoursAgo = Math.floor(
+                              (new Date() - new Date(announcement.$updatedAt)) /
+                                1000 /
+                                60 /
+                                60
+                            );
+                            return (
+                              <div
+                                key={index}
+                                className="flex flex-row justify-between"
+                              >
+                                <div
+                                  className="bg-gray-400 mb-2 p-0.5 rounded-sm"
+                                  key={index}
+                                >
+                                  {announcement.content}{" "}
+                                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{" "}
+                                  {hoursAgo} hours ago
+                                </div>
+                              </div>
+                            );
+                          })}
+                      </div>
+                    </div>
+                  </Popover.Panel>
                 </div>
               </Transition>
             </>

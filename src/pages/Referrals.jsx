@@ -123,7 +123,7 @@ function Referrals() {
   //https://ptero.how2mc.xyz/join/{referalInfo.referralCode }
 
   return loading ? (
-    <div className="flex flex-row justify-center h-screen items-center overflow-hodden">
+    <div className="flex flex-row justify-center h-full items-center overflow-hodden">
       <InfinitySpin />
     </div>
   ) : referalInfo && referalInfo.length === 0 ? (

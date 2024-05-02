@@ -13,21 +13,22 @@ export default function PostCard({ title = "Title", image, slug , description}) 
   console.log('description: ', parse(description).$$typeof  )
   const tagparser = new DOMParser()
   console.log('description: ', tagparser.parseFromString(description, 'text/html').querySelector("body").textContent )
-  const content = `${tagparser.parseFromString(description, 'text/html').querySelector("body").textContent.slice( 0, 200)}...`
+  const content = `${tagparser.parseFromString(description, 'text/html').querySelector("body").textContent.slice( 0, 170)}...`
   return (
     
-    <div className="h-auto bg-transparent shadow-lg w-[345px] cursor-pointer shadow-blue-300">
-      <Card color="" className="mt-4" sx={{ maxWidth: 345, bgcolor: "transparent"}}>
+    <div className="h-[350px] bg-transparent shadow-lg w-[345px] cursor-pointer shadow-blue-300">
+      <Card color="" className="mt-4 h-[350px] flex flex-col" sx={{ maxWidth: 345, bgcolor: "transparent"}}>
         <CardMedia
           component="img"
           alt="green iguana"
           height="140"
           image={image}
+          style={{ maxHeight: '170px', }} // Replace '200px' with your desired value
         />
         <div className="mt-2"></div>
         <CardContent >
           <div className="flex flex-col">
-            <Typography variant="h4" component="div" color="white">
+            <Typography variant="h6" component="div" color="white">
               {title.toUpperCase()}
             </Typography>
             <p  className="text-neutral-300">{content}</p>
@@ -35,8 +36,10 @@ export default function PostCard({ title = "Title", image, slug , description}) 
             <div className="mt-auto translate-y-6 text-slate-700 font-light"></div>
           </div>
         </CardContent>
-        <CardActions>
+        <div className="mt-auto mb-2 ">
+        <CardActions >
           <Button 
+          
           color="success"
           variant="contained"
           size="small" onClick={
@@ -46,6 +49,7 @@ export default function PostCard({ title = "Title", image, slug , description}) 
             View
           </Button>
         </CardActions>
+        </div>
       </Card>
     </div>
   );

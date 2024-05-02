@@ -20,6 +20,7 @@ import { set } from "react-hook-form";
 import userdata from "../services/userData.appwrite.js";
 import { BackgroundGradient } from "../components/BackgroundGradient";
 import { Spotlight } from "../components/Spotlight.tsx";
+import AdComponent from "../components/AdComponent"
 import {
   TextRevealCard,
   TextRevealCardDescription,
@@ -171,7 +172,7 @@ function Home() {
   }
 
   return isLoading ? (
-    <div className="flex flex-row justify-center items-center h-screen">
+    <div className="flex overflow-hidden flex-row justify-center items-center h-full">
       <Bars
         className=""
         height="80"
@@ -186,11 +187,10 @@ function Home() {
   ) : (
     <div
       key={key}
-      className="flex flex-col overflow-y-auto bg-transparent text-neutral-50 rounded-sm pb-4 bg-dot-white/[0.2] relative   mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"
+      className="flex flex-col overflow-y-auto bg-transparent text-neutral-50 rounded-sm  bg-dot-white/[0.2] relative   mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"
     >
       <div className="px-2 py-2 h-[300px] ">
         {(
-         
           <div className="">
             <div className="flex items-center justify-center bg-[#0E0E10] rounded-2xl ">
               <TextRevealCard
@@ -202,7 +202,8 @@ function Home() {
                   Wandering for best game server hardwares ?
                 </TextRevealCardTitle>
                 <TextRevealCardDescription>
-                  Your wait is over. We provide you the best hardwares for your servers.
+                  Your wait is over. We provide you the best hardwares for your
+                  servers.
                 </TextRevealCardDescription>
               </TextRevealCard>
             </div>
@@ -219,6 +220,7 @@ function Home() {
           Don't miss out!
         </div>
       </div>
+       {/* <AdComponent /> */}
       <div className="">
         <div className="flex flex-row gap-2 w-[1600px]  ">
           <Card

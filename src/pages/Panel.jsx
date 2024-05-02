@@ -68,7 +68,8 @@ function Panel() {
         </div>
         <div className="flex flex-col mt-4 justify-center items-center">
           <div className="w-[300px] ml-auto mr-auto">
-            <img src="https://i.imgur.com/m9zVHCj.png" />
+            <img src="./public/panelImage.png" />
+            {/* <img src="https://i.imgur.com/m9zVHCj.png" /> */}
           </div>
           <div className="w-[400px] bg-slate-600 p-3 rounded-lg text-white  shadow-lg shadow-gray-700">
             <div className="flex flex-row gap-4 ">

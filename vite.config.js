@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server:{
     proxy:{
-       '/api/application': 'https://panel.how2mc.xyz/',
+       '/api/application': 'https://panel.how2mc.xyz',
       //'/api/application': 'http://192.168.176.167/',
     }
   }

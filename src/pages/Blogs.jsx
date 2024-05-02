@@ -20,7 +20,7 @@ function Blogs() {
   }
   , []);
   return (
-    loadng ? (<div className="h-screen flex flex-row justify-center items-center"><Vortex
+    loadng ? (<div className="h-full flex flex-row justify-center items-center"><Vortex
       visible={true}
       height="80"
       width="80"
@@ -31,7 +31,7 @@ function Blogs() {
       /></div>) :
     <div className="flex flex-col ml-2 mr-2 bg-transparent h-[750px] p-2 rounded-lg bg-dot-white/[0.2] relative   mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]">
       <div className="font-bold text-3xl">
-        <h1>Blogs</h1>
+        <h1 className="text-white">Blogs</h1>
       </div>
       <div className="mt-2 mr-2 flex flex-wrap gap-4">
         {

@@ -34,7 +34,7 @@ function Sidebar({ className = "" }) {
 
   return (
     <div
-      className={`px-3 flex flex-col  bg-black  w-60 ${className} overflow-hidden `}
+      className={`px-3 flex flex-col h-screen bg-black  w-60 ${className} overflow-hidden `}
     >
       <div className="flex items-center gap-2 px-3 py-5 ">
         <Link to="/">
