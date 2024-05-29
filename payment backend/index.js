@@ -1,58 +1,66 @@
-
 require('dotenv').config();
 
 const express = require('express');
-const Razorpay = require('razorpay');
+const paypal = require('@paypal/checkout-server-sdk');
 const cors = require('cors');
-const crypto = require('crypto');
 const app = express();
 
 app.use(express.json());
-app.use(cors())
-app.unsubscribe(express.urlencoded({ extended: false }))
+app.use(cors());
+app.use(express.urlencoded({ extended: false }));
 
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,
-    key_secret: process.env.RAZORPAY_KEY_SECRET
-});
+// PayPal environment and client setup for live environment
+let environment = new paypal.core.LiveEnvironment(process.env.PAYPAL_CLIENT_ID, process.env.PAYPAL_CLIENT_SECRET);
+let client = new paypal.core.PayPalHttpClient(environment);
 
-
-app.post('/order', async(req, res) => {
+app.post('/order', async (req, res) => {
     try {
-        const razorpay = new Razorpay({
-            key_id: process.env.RAZORPAY_KEY_ID,
-            key_secret: process.env.RAZORPAY_KEY_SECRET
+        const { amount } = req.body; // Assumes amount is passed in the request body
+        const request = new paypal.orders.OrdersCreateRequest();
+        request.prefer("return=representation");
+        request.requestBody({
+            intent: 'CAPTURE',
+            purchase_units: [{
+                amount: {
+                    currency_code: 'USD', // Currency set to USD
+                    value: amount
+                }
+            }]
         });
-        const options =  req.body;
-    
-        const order = await razorpay.orders.create(options);
-        
-        if(!order) return res.status(500).send('Some error occured');
-        
-        res.json(order);
+
+        const order = await client.execute(request);
+        if (!order) return res.status(500).send('Some error occurred');
+
+        res.json(order.result);
     } catch (error) {
         console.error(error);
+        res.status(500).send('An error occurred');
     }
-})
+});
 
-app.post('/order/validate', async(req, res) => {
-    const {razorpay_payment_id, razorpay_order_id, razorpay_signature} = req.body;
+app.post('/order/validate', async (req, res) => {
+    const { orderID } = req.body;
 
-    const sha = crypto.createHmac("sha256", String(process.env.RAZORPAY_KEY_SECRET));
-  //order_id + "|" + razorpay_payment_id
-  sha.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-  const digest = sha.digest("hex");
-  if (digest !== razorpay_signature) {
-    return res.status(400).json({ msg: "Transaction is not legit!" });
-  }
+    try {
+        const request = new paypal.orders.OrdersCaptureRequest(orderID);
+        request.requestBody({});
 
-  res.json({
-    msg: "success",
-    orderId: razorpay_order_id,
-    paymentId: razorpay_payment_id,
-  });
-})
+        const capture = await client.execute(request);
+        if (capture.result.status === 'COMPLETED') {
+            res.json({
+                msg: "success",
+                orderId: orderID,
+                captureId: capture.result.purchase_units[0].payments.captures[0].id
+            });
+        } else {
+            res.status(400).json({ msg: "Transaction is not legit!" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('An error occurred');
+    }
+});
 
 app.listen(5000, () => {
-    console .log('Server started on http://localhost:5000');
-})
+    console.log('Server started on http://localhost:5000');
+});
